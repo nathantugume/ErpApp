@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="420dp"
+        android:layout_height="364dp"
+        android:contentDescription="TODO"
+        android:scaleType="fitXY"
+        android:src="@mipmap/bg_home"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:layout_width="409dp"
+        android:layout_height="487dp"
+        android:layout_marginStart="3dp"
+        android:background="@drawable/rounded_corner_shape"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+        <!-- Add your UI elements here -->
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/glass_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="75dp"
+            android:layout_marginStart="10dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Welcome"
+                    android:textColor="#5F2FB3"
+                    android:textSize="40sp"
+                    android:textAlignment="center"
+                    android:background="@drawable/glass_background" />
+
+                <TextView
+                    android:id="@+id/desc_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/welcome_message"
+                    android:textSize="16sp"
+                    android:layout_margin="10dp"
+                    android:textAlignment="textStart"
+                    android:textStyle="bold"
+                    />
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:layout_marginTop="20dp"
+            android:textSize="30sp"
+            android:layout_below="@id/glass_card"
+            android:layout_centerHorizontal="true"
+            />
+
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

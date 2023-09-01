@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "253380978308",
+    "project_id": "erpapp-cadcc",
+    "storage_bucket": "erpapp-cadcc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253380978308:android:855f87edd4d05fe465c4d1",
+        "android_client_info": {
+          "package_name": "com.example.erpapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "253380978308-mm81e8e73c5cqdoij3725db8566gdup4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy1HPM0Sk_0L9e9Ui6UrxASi1rxFhsnxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "253380978308-mm81e8e73c5cqdoij3725db8566gdup4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

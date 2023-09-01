@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_product.xml -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="10dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp"
+  >
+
+ <LinearLayout
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:orientation="horizontal"
+     >
+
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:orientation="vertical"
+         android:padding="16dp">
+
+         <TextView
+             android:id="@+id/productNameTextView"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Product Name"
+             android:textColor="@android:color/black"
+             android:textSize="20sp" />
+
+         <TextView
+             android:id="@+id/barcodeTextView"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Barcode"
+             android:textColor="@android:color/darker_gray"
+             android:textSize="16sp" />
+
+         <TextView
+             android:id="@+id/description"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/product_description"
+             android:textColor="@android:color/darker_gray"
+             android:textSize="15sp" />
+
+         <!-- Add more views if needed -->
+
+     </LinearLayout>
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:orientation="vertical"
+         android:layout_marginTop="10dp"
+         >
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:orientation="horizontal"
+             >
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textSize="15sp"
+                 android:textColor="#000"
+                 android:text="Quantity:" />
+             <TextView
+                 android:id="@+id/quantity"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textSize="15sp"
+                 android:textColor="#000"
+                 android:text="20" />
+         </LinearLayout>
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:orientation="horizontal"
+             >
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textSize="15sp"
+                 android:textColor="#000"
+                 android:text="Price:" />
+             <TextView
+                 android:id="@+id/price"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textSize="15sp"
+                 android:textColor="#000"
+                 android:text="20" />
+         </LinearLayout>
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:orientation="horizontal"
+             >
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textSize="15sp"
+                 android:textColor="#000"
+                 android:text="Buying Price:" />
+             <TextView
+                 android:id="@+id/buying_price"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textSize="15sp"
+                 android:textColor="#000"
+                 android:text="20" />
+         </LinearLayout>
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:orientation="horizontal"
+             >
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textSize="15sp"
+                 android:textColor="#000"
+                 android:text="Category:" />
+             <TextView
+                 android:id="@+id/category"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:textSize="15sp"
+                 android:textColor="#000"
+                 android:text="20" />
+         </LinearLayout>
+     </LinearLayout>
+
+
+ </LinearLayout>
+
+
+
+</com.google.android.material.card.MaterialCardView>
