@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:padding="16dp"
+        android:visibility="gone"
         android:text="Total: Ugx 0.00"
         android:textStyle="bold"
         android:gravity="end"/>

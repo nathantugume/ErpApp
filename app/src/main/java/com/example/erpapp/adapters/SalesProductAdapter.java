@@ -97,10 +97,10 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
                     quantityTextView.setText(String.valueOf(currentQuantity));
 
                     // Update the total price when quantity increases
-                    String total = productPriceTextView.getText().toString();
-                    double total_double = Double.parseDouble(total);
+                    double price = Double.parseDouble(productPriceTextView.getText().toString());
+//                        Log.d("total","price"+totalPrice);
+                    double totalPrice = currentQuantity*price;
 
-                    double totalPrice = calculateTotalPrice(product, itemClickListener);
                     totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: %.2f", totalPrice));
 
                     // Notify the listener about the quantity change
@@ -117,8 +117,10 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
                         quantityTextView.setText(String.valueOf(currentQuantity));
 
                         // Update the total price when quantity decreases
-                        double totalPrice = calculateTotalPrice(product, itemClickListener);
-                        Log.d("total","price"+totalPrice);
+//                        double totalPrice = calculateTotalPrice(product, itemClickListener);
+                        double price = Double.parseDouble(productPriceTextView.getText().toString());
+//                        Log.d("total","price"+totalPrice);
+                        double totalPrice = currentQuantity*price;
 
                         totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: %.2f", totalPrice));
 
