@@ -20,11 +20,10 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
 
     public static SalesProductAdapter.OnItemClickListener itemClickListener;
     private List<Product> productList;
-//    private static OnItemClickListener itemClickListener;
 
     private static Product product;
 
-    private String total_price;
+
 
 
 
@@ -51,13 +50,14 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
         product = productList.get(position);
         int p_price = product.getPrice();
         String productPrice = String.valueOf(p_price);
-        total_price = productPrice;
+
+
+        int qty = product.getQuantity();
+        String quantity = String.valueOf(qty);
 
         holder.productNameTextView.setText(product.getProduct_name());
         holder.productPriceTextView.setText(productPrice);
-        holder.totalPriceTextView.setText(total_price);
-
-       // holder.barcodeTextView.setText(product.getBarcode());
+        holder.quantityTextView.setText(quantity);
 
         holder.itemView.setOnClickListener(v -> itemClickListener.onItemClick(product));
     }
@@ -70,7 +70,7 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
     static class ViewHolder extends RecyclerView.ViewHolder implements com.example.erpapp.adapters.ViewHolder {
         TextView productNameTextView;
         TextView quantityTextView;
-        TextView totalPriceTextView;
+
         Button incrementButton;
         Button decrementButton;
 
@@ -84,7 +84,7 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
             incrementButton = itemView.findViewById(R.id.incrementButton);
             decrementButton = itemView.findViewById(R.id.decrementButton);
-            totalPriceTextView = itemView.findViewById(R.id.totalPriceTextView);
+
             productPriceTextView = itemView.findViewById(R.id.productPriceTextView);
 
 
@@ -96,12 +96,7 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
                     currentQuantity++;
                     quantityTextView.setText(String.valueOf(currentQuantity));
 
-                    // Update the total price when quantity increases
-                    double price = Double.parseDouble(productPriceTextView.getText().toString());
-//                        Log.d("total","price"+totalPrice);
-                    double totalPrice = currentQuantity*price;
-
-                    totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: %.2f", totalPrice));
+                    product.setQuantity(currentQuantity);
 
                     // Notify the listener about the quantity change
                     itemClickListener.onQuantityChange(product, currentQuantity);
@@ -115,16 +110,8 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
                     if (currentQuantity > 0) {
                         currentQuantity--;
                         quantityTextView.setText(String.valueOf(currentQuantity));
-
-                        // Update the total price when quantity decreases
-//                        double totalPrice = calculateTotalPrice(product, itemClickListener);
-                        double price = Double.parseDouble(productPriceTextView.getText().toString());
-//                        Log.d("total","price"+totalPrice);
-                        double totalPrice = currentQuantity*price;
-
-                        totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: %.2f", totalPrice));
-
-                        // Notify the listener about the quantity change
+                        product.setQuantity(currentQuantity);
+                           // Notify the listener about the quantity change
                         itemClickListener.onQuantityChange(product, currentQuantity);
                     }
                 }
@@ -140,15 +127,14 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
     public interface OnItemClickListener {
         void onItemClick(Product product);
         void onQuantityChange(Product product, int newQuantity);
+
+
         int getQuantity(Product product);
+
         int getPrice(Product product);
     }
 
 
-    private static double calculateTotalPrice(Product product, OnItemClickListener itemClickListener) {
 
-
-        return itemClickListener.getPrice(product) * itemClickListener.getQuantity(product);
-    }
 
 }

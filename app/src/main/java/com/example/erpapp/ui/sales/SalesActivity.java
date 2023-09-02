@@ -3,13 +3,11 @@ package com.example.erpapp.ui.sales;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,7 +42,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
         if (result.getContents() != null) {
 
             etBarcodeOrSearch.setText(result.getContents());
-            fetchProducts();
+          
         }
     });
 
@@ -82,25 +80,136 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
 
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
-        barCodeSearch();
+        etBarcodeOrSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ScanOptions options = new ScanOptions();
+                options.setPrompt("volume up for flash light ");
+                options.setBeepEnabled(true);
+                options.setOrientationLocked(true);
+                options.setCaptureActivity(CaptureAct.class);
+                barLauncher.launch(options);
+            }
+        });
 
         btnFetchProductDetails.setOnClickListener(v -> {
-            fetchProducts();
-            dialog.dismiss();
+            String searchTerm = etBarcodeOrSearch.getText().toString().trim();
+            Log.d("search", "term" + searchTerm);
+
+            if (!searchTerm.isEmpty()) {
+                if (isNumeric(searchTerm)) {
+                    // If the search term is numeric (potential barcode), perform barcode search
+                    barCodeSearch(searchTerm);
+                } else {
+                    // If the search term is not numeric, perform text search
+                    fetchProducts(searchTerm);
+                }
+                dialog.dismiss();
+            } else {
+                Toast.makeText(this, "Please enter search details", Toast.LENGTH_SHORT).show();
+                etBarcodeOrSearch.setError("Enter a product to search");
+                etBarcodeOrSearch.requestFocus();
+            }
         });
     }
 
-    private void fetchProducts() {
-        String barcodeOrSearchText = etBarcodeOrSearch.getText().toString();
+    // Check if a string is numeric (contains only digits)
+    private boolean isNumeric(String str) {
+        return str.matches("\\d+");
+    }
+
+    private void fetchProducts(String barcodeOrSearchText) {
+//        String barcodeOrSearchText = etBarcodeOrSearch.getText().toString();
         // Fetch product details based on barcode or search text
         // You need to implement this part by querying your database or API
         // Create a Product object and add it to the sales list
         // Update the RecyclerView and total price
 
-        Log.d("seachText", barcodeOrSearchText);
         firestore.collection("products")
-                .whereEqualTo("barcode", barcodeOrSearchText) // Adjust the field name based on your Firestore structure
+                .whereEqualTo("product_name", barcodeOrSearchText) // Adjust the field name based on your Firestore structure
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    String txt = "";
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                        // Assuming you have a Product class with appropriate setters/getters
 
+                        txt = documentSnapshot.getString("product_name");
+                        Product product = documentSnapshot.toObject(Product.class);
+                        addItemToSales(product);
+
+                        etBarcodeOrSearch.setText("");
+                        etBarcodeOrSearch.requestFocus();
+                    }
+                    Log.d("txt", txt);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error fetching the product" + e, Toast.LENGTH_SHORT).show();
+                    // Handle error
+                });
+
+
+
+    }
+
+
+
+    private void updateSalesList() {
+        productAdapter.updateData(salesList);
+        productAdapter.notifyDataSetChanged(); // Notify the adapter that data has changed
+
+        // Update the total price display based on the current sales list
+     updateTotalPrice();
+    }
+
+    private double calculateTotalPrice() {
+        double total = 0;
+        for (Product product : salesList) {
+            total += product.getPrice() * product.getQuantity(); // Calculate total price for each item
+
+            Log.d("toto","totalqty"+total);
+        }
+        return total;
+    }
+
+
+    private void addItemToSales(Product product) {
+        // Check if the product already exists in the salesList
+        boolean productExists = false;
+        for (Product p : salesList) {
+            if (p.getProductId().equals(product.getProductId())) {
+                // Product already exists, update its quantity
+                p.setQuantity(p.getQuantity() + 1);
+                productExists = true;
+                Toast.makeText(this, "product already added", Toast.LENGTH_SHORT).show();
+
+
+                break; // No need to continue searching
+            }
+        }
+
+        if (!productExists) {
+            // Product doesn't exist in the list, add it
+            product.setQuantity(1); // Set initial quantity to 1
+            salesList.add(product);
+
+        }
+
+        // Update the total price after adding or updating an item
+        updateSalesList();
+        updateTotalPrice();
+    }
+
+    private void updateTotalPrice() {
+        double totalPrice = calculateTotalPrice();
+        totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: %.2f", totalPrice));
+    }
+
+
+
+
+    public void barCodeSearch(String barcodeOrSearchText) {
+        firestore.collection("products")
+                .whereEqualTo("barcode",barcodeOrSearchText)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     String txt = "";
@@ -119,55 +228,6 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
                     Toast.makeText(this, "Error fetching the product" + e, Toast.LENGTH_SHORT).show();
                     // Handle error
                 });
-
-    }
-
-
-    private void updateSalesList() {
-        productAdapter.updateData(salesList);
-        productAdapter.notifyDataSetChanged(); // Notify the adapter that data has changed
-        // Update the total price display based on the current sales list
-       double totalPrice = calculateTotalPrice();
-        totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: %.2f", totalPrice));
-    }
-
-    private double calculateTotalPrice() {
-        double total = 0;
-        for (Product product : salesList) {
-            // Assuming product.getPrice() returns a double representing the price
-            total += product.getPrice();
-        }
-        return total;
-    }
-
-    private void addItemToSales(Product product) {
-        // Add the selected product to the sales list
-        // Update the RecyclerView and total price
-        salesList.add(product);
-        updateSalesList();
-    }
-
-    public void barCodeSearch() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.fragment_sales, null);
-        dialogBuilder.setView(dialogView);
-
-        etBarcodeOrSearch = dialogView.findViewById(R.id.etBarcodeOrSearch);
-
-        etBarcodeOrSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ScanOptions options = new ScanOptions();
-                options.setPrompt("volume up for flash light ");
-                options.setBeepEnabled(true);
-                options.setOrientationLocked(true);
-                options.setCaptureActivity(CaptureAct.class);
-                barLauncher.launch(options);
-            }
-        });
-
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.show();
     }
 
     @Override
@@ -180,8 +240,8 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
     public void onQuantityChange(Product product, int newQuantity) {
         // Handle quantity change here
         // For example, you can update the total price or perform other operations
-        double totalPrice = calculateTotalPrice(); // Recalculate total price
-        totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: %.2f", totalPrice));
+
+
 
         // You can also update the product's quantity in the salesList
         // Find the product in the salesList and update its quantity
@@ -191,6 +251,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
                 break; // No need to continue searching
             }
         }
+        updateTotalPrice();
     }
 
     @Override
