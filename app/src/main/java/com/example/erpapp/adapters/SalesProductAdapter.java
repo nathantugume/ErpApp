@@ -1,6 +1,5 @@
 package com.example.erpapp.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,30 +13,25 @@ import com.example.erpapp.Classes.Product;
 import com.example.erpapp.R;
 
 import java.util.List;
-import java.util.Locale;
 
 public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapter.ViewHolder> {
 
-    public static SalesProductAdapter.OnItemClickListener itemClickListener;
+    private OnItemClickListener itemClickListener;
+    private OnItemRemovedListener itemRemovedListener;
     private List<Product> productList;
+    private List<Product> salesList;
 
-    private static Product product;
-
-
-
-
-
-    public SalesProductAdapter(List<Product> productList, OnItemClickListener itemClickListener) {
+    public SalesProductAdapter(List<Product> productList, OnItemClickListener itemClickListener, OnItemRemovedListener itemRemovedListener) {
         this.productList = productList;
-        SalesProductAdapter.itemClickListener = itemClickListener;
+        this.itemClickListener = itemClickListener;
+        this.itemRemovedListener =itemRemovedListener;
+    }
+    // Add a setter method for salesList
+    public void setSalesList(List<Product> salesList) {
+        this.salesList = salesList;
     }
 
-    public void updateData(List<Product> newProductList) {
-        productList.clear();
-        productList.addAll(newProductList);
-        notifyDataSetChanged();
-    }
-
+    // onCreateViewHolder is required to be implemented
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,10 +41,9 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        product = productList.get(position);
+        Product product = productList.get(position);
         int p_price = product.getPrice();
         String productPrice = String.valueOf(p_price);
-
 
         int qty = product.getQuantity();
         String quantity = String.valueOf(qty);
@@ -59,24 +52,29 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
         holder.productPriceTextView.setText(productPrice);
         holder.quantityTextView.setText(quantity);
 
-        holder.itemView.setOnClickListener(v -> itemClickListener.onItemClick(product));
+
     }
+
+
+
 
     @Override
     public int getItemCount() {
         return productList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements com.example.erpapp.adapters.ViewHolder {
+    public void updateData(List<Product> newProductList) {
+        productList.clear();
+        productList.addAll(newProductList);
+        notifyDataSetChanged();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
         TextView productNameTextView;
         TextView quantityTextView;
-
         Button incrementButton;
         Button decrementButton;
-
         TextView productPriceTextView;
-
-
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -84,21 +82,16 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
             incrementButton = itemView.findViewById(R.id.incrementButton);
             decrementButton = itemView.findViewById(R.id.decrementButton);
-
             productPriceTextView = itemView.findViewById(R.id.productPriceTextView);
 
-
-            // Find other views here
             incrementButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int currentQuantity = Integer.parseInt(quantityTextView.getText().toString());
                     currentQuantity++;
                     quantityTextView.setText(String.valueOf(currentQuantity));
-
+                    Product product = productList.get(getAdapterPosition());
                     product.setQuantity(currentQuantity);
-
-                    // Notify the listener about the quantity change
                     itemClickListener.onQuantityChange(product, currentQuantity);
                 }
             });
@@ -110,31 +103,25 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
                     if (currentQuantity > 0) {
                         currentQuantity--;
                         quantityTextView.setText(String.valueOf(currentQuantity));
+                        Product product = productList.get(getAdapterPosition());
                         product.setQuantity(currentQuantity);
-                           // Notify the listener about the quantity change
                         itemClickListener.onQuantityChange(product, currentQuantity);
                     }
                 }
             });
         }
-
-
     }
-
-
-
 
     public interface OnItemClickListener {
         void onItemClick(Product product);
         void onQuantityChange(Product product, int newQuantity);
 
-
         int getQuantity(Product product);
 
         int getPrice(Product product);
     }
-
-
-
+    public interface OnItemRemovedListener {
+        boolean onItemRemoved();
+    }
 
 }

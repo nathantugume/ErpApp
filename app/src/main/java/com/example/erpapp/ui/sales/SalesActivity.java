@@ -3,6 +3,7 @@ package com.example.erpapp.ui.sales;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.erpapp.Classes.Product;
+import com.example.erpapp.Classes.SwipeToDeleteCallback;
 import com.example.erpapp.Fragments.CaptureAct;
 import com.example.erpapp.R;
 import com.example.erpapp.adapters.SalesProductAdapter;
@@ -38,6 +40,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
     private SalesProductAdapter productAdapter;
     private FirebaseFirestore firestore; // Declare Firestore instance
     private EditText etBarcodeOrSearch;
+    private SalesProductAdapter.OnItemRemovedListener onItemRemovedListener;
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
 
@@ -60,11 +63,13 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
 
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        productAdapter = new SalesProductAdapter(productList,this);
+        productAdapter = new SalesProductAdapter(productList,this, onItemRemovedListener);
+        productAdapter.setSalesList(salesList);
 
         recyclerView.setAdapter(productAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(productList, productAdapter,salesList));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        // Set up search functionality
 
     }
 
@@ -94,9 +99,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
 
         btnFetchProductDetails.setOnClickListener(v -> {
             String searchTerm = etBarcodeOrSearch.getText().toString().trim();
-            Log.d("search", "term" + searchTerm);
-
-            if (!searchTerm.isEmpty()) {
+               if (!searchTerm.isEmpty()) {
                 if (isNumeric(searchTerm)) {
                     // If the search term is numeric (potential barcode), perform barcode search
                     barCodeSearch(searchTerm);
@@ -235,6 +238,9 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
         Toast.makeText(this, "Clicked on: " + product.getProduct_name(), Toast.LENGTH_SHORT).show();
 
     }
+
+
+
 
     @Override
     public void onQuantityChange(Product product, int newQuantity) {
