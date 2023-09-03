@@ -69,7 +69,7 @@ public class ProductsActivity extends AppCompatActivity {
 
         // Initialize RecyclerView and set its adapter
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        productAdapter = new ProductAdapter(productList);
+        productAdapter = new ProductAdapter(this,productList);
         recyclerView.setAdapter(productAdapter);
 
         // Load products from Firestore

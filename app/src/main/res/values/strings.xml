@@ -29,6 +29,10 @@
     <string name="select_a_category">Select a category</string>
     <string name="barcode_scan">Barcode Scan</string>
     <string name="total_ugx_0_00">Total: Ugx 0.00</string>
+    <string name="add_sale_item_button">add sale item button</string>
+    <string name="save_sale_details_button">save sale details button</string>
+    <string name="expenses">Expenses</string>
+    <string name="stock">Stock</string>
 
 
 </resources>

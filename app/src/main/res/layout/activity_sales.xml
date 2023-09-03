@@ -28,14 +28,16 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@+id/topbarLayout"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/topbarLayout"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="-6dp" />
+        android:layout_marginBottom="-6dp"
+        tools:itemCount="8"
+        tools:listitem="@layout/recycler_view_item" />
 
     <TextView
         android:id="@+id/totalPriceTextView"
@@ -56,6 +58,7 @@
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="80dp"
+        android:contentDescription="@string/add_sale_item_button"
         android:src="@drawable/ic_add" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -64,10 +67,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_save2"
         android:layout_gravity="end|bottom"
+        android:labelFor="@+id/fabSaveProduct"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="150dp"
-        android:src="@drawable/ic_save" />
+        android:contentDescription="@string/save_sale_details_button"
+
+        />
 
 
 </RelativeLayout>

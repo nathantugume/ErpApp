@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class SalesActivity extends AppCompatActivity implements  SalesProductAdapter.OnItemClickListener{
+public class SalesActivity extends AppCompatActivity implements SalesProductAdapter.OnItemClickListener {
 
     private RecyclerView recyclerView;
     private TextView totalPriceTextView;
@@ -53,7 +53,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
         if (result.getContents() != null) {
 
             etBarcodeOrSearch.setText(result.getContents());
-          
+
         }
     });
 
@@ -73,11 +73,11 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
 
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        productAdapter = new SalesProductAdapter(productList,this, onItemRemovedListener);
+        productAdapter = new SalesProductAdapter(productList, this, onItemRemovedListener);
         productAdapter.setSalesList(salesList);
 
         recyclerView.setAdapter(productAdapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(productList, productAdapter,salesList));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(productList, productAdapter, salesList));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
 
@@ -176,7 +176,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
 
         btnFetchProductDetails.setOnClickListener(v -> {
             String searchTerm = etBarcodeOrSearch.getText().toString().trim();
-               if (!searchTerm.isEmpty()) {
+            if (!searchTerm.isEmpty()) {
                 if (isNumeric(searchTerm)) {
                     // If the search term is numeric (potential barcode), perform barcode search
                     barCodeSearch(searchTerm);
@@ -199,7 +199,6 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
     }
 
     private void fetchProducts(String barcodeOrSearchText) {
-//        String barcodeOrSearchText = etBarcodeOrSearch.getText().toString();
         // Fetch product details based on barcode or search text
         // You need to implement this part by querying your database or API
         // Create a Product object and add it to the sales list
@@ -228,9 +227,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
                 });
 
 
-
     }
-
 
 
     private void updateSalesList() {
@@ -238,7 +235,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
         productAdapter.notifyDataSetChanged(); // Notify the adapter that data has changed
 
         // Update the total price display based on the current sales list
-     updateTotalPrice();
+        updateTotalPrice();
     }
 
     private double calculateTotalPrice() {
@@ -246,7 +243,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
         for (Product product : salesList) {
             total += product.getPrice() * product.getQuantity(); // Calculate total price for each item
 
-            Log.d("toto","totalqty"+total);
+            Log.d("toto", "totalqty" + total);
         }
         return total;
     }
@@ -285,11 +282,9 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
     }
 
 
-
-
     public void barCodeSearch(String barcodeOrSearchText) {
         firestore.collection("products")
-                .whereEqualTo("barcode",barcodeOrSearchText)
+                .whereEqualTo("barcode", barcodeOrSearchText)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     String txt = "";
@@ -317,14 +312,10 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
     }
 
 
-
-
-
     @Override
     public void onQuantityChange(Product product, int newQuantity) {
         // Handle quantity change here
         // For example, you can update the total price or perform other operations
-
 
 
         // You can also update the product's quantity in the salesList
@@ -337,7 +328,6 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
         }
         updateTotalPrice();
     }
-
 
 
     @Override
