@@ -58,5 +58,16 @@
         android:layout_marginBottom="80dp"
         android:src="@drawable/ic_add" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSaveProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="150dp"
+        android:src="@drawable/ic_save" />
+
 
 </RelativeLayout>

@@ -16,19 +16,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.erpapp.Classes.Product;
+import com.example.erpapp.Classes.Sale;
 import com.example.erpapp.Classes.SwipeToDeleteCallback;
 import com.example.erpapp.Fragments.CaptureAct;
 import com.example.erpapp.R;
 import com.example.erpapp.adapters.SalesProductAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class SalesActivity extends AppCompatActivity implements  SalesProductAdapter.OnItemClickListener{
 
@@ -57,7 +65,9 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
         firestore = FirebaseFirestore.getInstance();
 
         FloatingActionButton fabAddProduct = findViewById(R.id.fabAddProduct);
+        FloatingActionButton fabSaveProduct = findViewById(R.id.fabSaveProduct);
         fabAddProduct.setOnClickListener(view -> showAddProductDialog());
+        fabSaveProduct.setOnClickListener(view -> saveProduct());
         recyclerView = findViewById(R.id.recyclerView);
         totalPriceTextView = findViewById(R.id.totalPriceTextView);
 
@@ -73,6 +83,73 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
 
     }
 
+    private void saveProduct() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Create a new Firestore collection reference for sales
+        CollectionReference salesRef = db.collection("sales");
+        CollectionReference productsRef = db.collection("products");
+
+        // Get the current date and time
+        Date currentDate = new Date();
+        // Create a SimpleDateFormat or any date/time formatting method to format the date and time as needed
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        String formattedDate = dateFormat.format(currentDate);
+        String formattedTime = timeFormat.format(currentDate);
+
+        // Iterate through the salesList and save each product as a document in the sales collection
+        for (Product product : salesList) {
+            int quantityToSubtract = product.getQuantity(); // Specify the quantity to subtract
+
+            // Define the Firestore document reference for the product
+            DocumentReference productRef = productsRef.document(product.getProductId());
+
+            // Create a map to update the quantity field with the subtraction
+            Map<String, Object> updateMap = new HashMap<>();
+            updateMap.put("quantity", FieldValue.increment(-quantityToSubtract));
+
+            // Update the Firestore document to subtract the quantity
+            productRef.update(updateMap)
+                    .addOnSuccessListener(aVoid -> {
+                        // Quantity updated successfully
+                        // Now you can proceed with creating the sale record
+
+                        // Create a new document with a unique ID (Firestore will generate one)
+                        DocumentReference saleDocRef = salesRef.document();
+
+                        // Create a Sale object representing the sale, including the product details, date, and time
+                        Sale sale = new Sale(
+                                saleDocRef.getId(),   // Use the document ID as the sale ID
+                                product.getProductId(),
+                                product.getProduct_name(),
+                                product.getPrice(),
+                                quantityToSubtract, // Use the specified quantity to sell
+                                formattedDate, // Set the saleDate to the current date
+                                formattedTime  // Set the saleTime to the current time
+                        );
+
+                        // Use the set method to save the Sale object as a document in the sales collection
+                        saleDocRef.set(sale)
+                                .addOnSuccessListener(documentReference -> {
+                                    // Successfully uploaded sale data to Firestore
+                                    Toast.makeText(this, "Sale data uploaded successfully", Toast.LENGTH_SHORT).show();
+
+                                    // Clear the productList and notify the adapter of the change
+                                    productList.clear();
+                                    productAdapter.notifyDataSetChanged();
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Handle the failure to upload sale data
+                                    Toast.makeText(this, "Error uploading sale data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle the failure to update the quantity
+                        Toast.makeText(this, "Error updating quantity: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
 
 
     private void showAddProductDialog() {
@@ -242,6 +319,7 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
 
 
 
+
     @Override
     public void onQuantityChange(Product product, int newQuantity) {
         // Handle quantity change here
@@ -260,6 +338,8 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
         updateTotalPrice();
     }
 
+
+
     @Override
     public int getQuantity(Product product) {
         return 0;
@@ -269,4 +349,5 @@ public class SalesActivity extends AppCompatActivity implements  SalesProductAda
     public int getPrice(Product product) {
         return product.getPrice();
     }
+
 }

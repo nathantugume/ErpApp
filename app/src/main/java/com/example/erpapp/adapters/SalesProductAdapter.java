@@ -121,6 +121,8 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
         int getPrice(Product product);
     }
     public interface OnItemRemovedListener {
+
+
         boolean onItemRemoved();
     }
 
