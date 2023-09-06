@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.erpapp.Classes.LoadCategoriesTask;
 import com.example.erpapp.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
@@ -43,6 +44,7 @@ public class AddProductDialogFragment extends DialogFragment {
     private TextInputEditText priceEditText, BpriceEditText;
     private TextInputEditText quantityEditText;
     private TextInputEditText barcodeEditText;
+    private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
 
@@ -51,13 +53,12 @@ public class AddProductDialogFragment extends DialogFragment {
     });
     private String selectedCategory = "";
     private Spinner categorySpinner;
+    private String productName, productDesc, price, quantity, barcode, buyingPrice;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-        FirebaseApp.initializeApp(getContext());
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
         View view = LayoutInflater.from(requireContext())
                 .inflate(R.layout.fragment_add_product_dialog, null);
@@ -70,6 +71,8 @@ public class AddProductDialogFragment extends DialogFragment {
         categorySpinner = view.findViewById(R.id.categorySpinner);
         BpriceEditText = view.findViewById(R.id.BpriceEditText);
 
+        LoadCategoriesTask loadCategoriesTask = new LoadCategoriesTask(getContext(), categorySpinner);
+        loadCategoriesTask.execute();
 //        barcode
         barcodeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,24 +80,6 @@ public class AddProductDialogFragment extends DialogFragment {
                 scanner();
             }
         });
-
-
-        firestore.collection("categories")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<String> categoryNames = new ArrayList<>();
-                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
-                        String categoryName = documentSnapshot.getString("name");
-                        Log.d("Categories", "name" + categoryName);
-                        categoryNames.add(categoryName);
-                    }
-
-                    setupCategorySpinner(categoryNames);
-                })
-                .addOnFailureListener(e -> {
-                    // Handle error
-                });
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setView(view)
@@ -106,18 +91,17 @@ public class AddProductDialogFragment extends DialogFragment {
         alertDialog.setOnShowListener(dialog -> {
             Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                String productName = productNameEditText.getText().toString();
-                String productDesc = productDescEditText.getText().toString();
-                String price = priceEditText.getText().toString();
-                String quantity = quantityEditText.getText().toString();
-                String barcode = barcodeEditText.getText().toString();
-                String buyingPrice = BpriceEditText.getText().toString();
+                productName = productNameEditText.getText().toString();
+                productDesc = productDescEditText.getText().toString();
+                price = priceEditText.getText().toString();
+                quantity = quantityEditText.getText().toString();
+                barcode = barcodeEditText.getText().toString();
+                buyingPrice = BpriceEditText.getText().toString();
 
                 // Set the item selection listener
                 categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                        selectedCategory = (String) parent.getItemAtPosition(position);
                         selectedCategory = (String) parent.getSelectedItem();
                         Log.d("selectedCategory", "category" + selectedCategory);
                     }
@@ -129,30 +113,7 @@ public class AddProductDialogFragment extends DialogFragment {
                 });
 
 
-                if (productName.isEmpty()) {
-                    productNameEditText.setError("Please enter product name");
-                    productNameEditText.requestFocus();
-                } else if (productDesc.isEmpty()) {
-                    productDescEditText.setError("Please enter product description");
-                    productDescEditText.requestFocus();
-                } else if (price.isEmpty()) {
-                    priceEditText.setError("Please enter product price");
-                    priceEditText.requestFocus();
-                } else if (buyingPrice.isEmpty()) {
-                    BpriceEditText.setError("please enter Buying price");
-                    BpriceEditText.requestFocus();
-
-                } else if (quantity.isEmpty()) {
-                    quantityEditText.setError("Please enter product quantity");
-                    quantityEditText.requestFocus();
-                } else if (barcode.isEmpty()) {
-                    barcodeEditText.setError("Please enter product barcode");
-                    barcodeEditText.requestFocus();
-                }
-                if (selectedCategory.isEmpty()) {
-                    // Show an error message to the user
-                    Toast.makeText(getContext(), "Please select a category", Toast.LENGTH_SHORT).show();
-                } else {
+                if (validateInput()) {
                     // Add category to Firestore with custom category ID
                     String productId = firestore.collection("products").document().getId(); // Generate category ID
                     DocumentReference productRef = firestore.collection("products").document(productId);
@@ -179,14 +140,45 @@ public class AddProductDialogFragment extends DialogFragment {
                             .addOnFailureListener(e -> {
                                 // Error handling
                             });
-                }
 
+                }
 
             });
         });
 
 
         return alertDialog;
+    }
+
+    private boolean validateInput() {
+        if (productName.isEmpty()) {
+            productNameEditText.setError("Please enter product name");
+            productNameEditText.requestFocus();
+        } else if (productDesc.isEmpty()) {
+            productDescEditText.setError("Please enter product description");
+            productDescEditText.requestFocus();
+        } else if (price.isEmpty()) {
+            priceEditText.setError("Please enter product price");
+            priceEditText.requestFocus();
+        } else if (buyingPrice.isEmpty()) {
+            BpriceEditText.setError("please enter Buying price");
+            BpriceEditText.requestFocus();
+
+        } else if (quantity.isEmpty()) {
+            quantityEditText.setError("Please enter product quantity");
+            quantityEditText.requestFocus();
+        } else if (barcode.isEmpty()) {
+            barcodeEditText.setError("Please enter product barcode");
+            barcodeEditText.requestFocus();
+        }
+        if (selectedCategory.isEmpty()) {
+            // Show an error message to the user
+            Toast.makeText(getContext(), "Please select a category", Toast.LENGTH_SHORT).show();
+        } else {
+            return true;
+        }
+        return false;
+
     }
 
     private void scanner() {
@@ -198,14 +190,5 @@ public class AddProductDialogFragment extends DialogFragment {
         barLauncher.launch(options);
     }
 
-    private void setupCategorySpinner(List<String> categoryNames) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                getContext(),
-                android.R.layout.simple_spinner_item,
-                categoryNames
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(adapter);
-    }
 
 }

@@ -31,7 +31,9 @@
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/topbarLayout">
+        android:layout_below="@id/topbarLayout"
+        app:queryHint="name or long press to scan "
+        >
 
     </androidx.appcompat.widget.SearchView>
     <com.facebook.shimmer.ShimmerFrameLayout

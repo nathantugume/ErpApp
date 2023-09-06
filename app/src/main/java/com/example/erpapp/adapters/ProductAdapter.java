@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.erpapp.Classes.LoadCategoriesTask;
 import com.example.erpapp.Classes.Product;
 import com.example.erpapp.R;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,8 +27,9 @@ import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
 
-    private List<Product> productList;
-    private Context context;
+    private final List<Product> productList;
+    private final Context context;
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     public ProductAdapter(Context context, List<Product> productList) {
         this.context = context;
@@ -51,20 +52,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = productList.get(position);
-        int qty = product.getQuantity();
-        int pri = product.getPrice();
-        int byp = product.getBuying_price();
-        String buyingPrice = String.valueOf(byp);
-        String price = String.valueOf(pri);
-        String quantity = String.valueOf(qty);
+
         holder.productNameTextView.setText(product.getProduct_name());
         holder.barcodeTextView.setText(product.getBarcode());
         holder.category.setText(product.getCategory());
-        holder.quantity.setText(quantity);
-        holder.buying_price.setText(buyingPrice);
-        holder.price.setText(price);
+        holder.quantity.setText(String.valueOf(product.getQuantity()));
+        holder.buying_price.setText(String.valueOf(product.getBuying_price()));
+        holder.price.setText(String.valueOf(product.getPrice()));
         holder.description.setText(product.getProduct_desc());
-
         holder.menuIcon.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(context, holder.menuIcon);
             popupMenu.inflate(R.menu.card_menu);
@@ -111,12 +106,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             popupMenu.show();
         });
     }
-//editing the products
+
+    //editing the products
     private void showEditProductDialog(Product product) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.edit_product_dialog, null);
         dialogBuilder.setView(dialogView);
-        dialogBuilder.setTitle("Edit Product");
+        dialogBuilder.setTitle("EDIT " + product.getProduct_name().toUpperCase());
 
         EditText productNameEditText = dialogView.findViewById(R.id.productNameEditText);
         EditText productDescEditText = dialogView.findViewById(R.id.productDescEditText);
@@ -127,34 +123,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
 
         Spinner categorySpinner = dialogView.findViewById(R.id.categorySpinner);
+        new LoadCategoriesTask(context, categorySpinner,product.getCategory()).execute();
 
-
-        // Initialize the spinner with categories
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        firestore.collection("categories")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<String> categoryNames = new ArrayList<>();
-                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
-                        String categoryName = documentSnapshot.getString("name");
-                        categoryNames.add(categoryName);
-                    }
-
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
-                            android.R.layout.simple_spinner_item,
-                            categoryNames
-                    );
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    categorySpinner.setAdapter(adapter);
-
-                    // Set the selected category based on the product's category
-                    String currentCategory = product.getCategory();
-                    int categoryPosition = categoryNames.indexOf(currentCategory);
-                    categorySpinner.setSelection(categoryPosition);
-                })
-                .addOnFailureListener(e -> {
-                    // Handle error
-                });
 
         // Populate the input fields with the existing product details
         productNameEditText.setText(product.getProduct_name());
@@ -184,15 +154,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             String updatedCategory = categorySpinner.getSelectedItem().toString();
             product.setCategory(updatedCategory);
             // Update the Firestore document
-//            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
             firestore.collection("products").document(product.getProductId())
-                    .update("barcode",product.getBarcode(),
-                            "buying_price",product.getBuying_price(),
-                            "categoty",product.getCategory(),
-                            "price",product.getPrice(),
-                            "product_desc",product.getProduct_desc(),
-                            "product_name",product.getProduct_name(),
-                            "quantity",product.getQuantity()
+                    .update("barcode", product.getBarcode(),
+                            "buying_price", product.getBuying_price(),
+                            "categoty", product.getCategory(),
+                            "price", product.getPrice(),
+                            "product_desc", product.getProduct_desc(),
+                            "product_name", product.getProduct_name(),
+                            "quantity", product.getQuantity()
                     )
                     .addOnSuccessListener(aVoid -> {
                         // Data updated successfully in Firestore

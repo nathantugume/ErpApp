@@ -1,5 +1,6 @@
 package com.example.erpapp.ui.products;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.example.erpapp.Classes.Product;
 import com.example.erpapp.Fragments.AddCategoryDialogFragment;
 import com.example.erpapp.Fragments.AddProductDialogFragment;
+import com.example.erpapp.Fragments.CaptureAct;
 import com.example.erpapp.R;
 import com.example.erpapp.adapters.ProductAdapter;
 import com.facebook.shimmer.Shimmer;
@@ -23,6 +25,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +36,17 @@ public class ProductsActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
     private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
-    private List<Product> productList = new ArrayList<>();
+    private final List<Product> productList = new ArrayList<>();
     private SearchView searchView;
 
     private  ShimmerFrameLayout shimmerFrameLayout;
 
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+            searchView.setQuery(result.getContents(),true);
+
+        }
+    });
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,11 +106,28 @@ public class ProductsActivity extends AppCompatActivity {
                     // Filter the products based on the search query
                     List<Product> filteredProducts = filterProducts(productList, newText);
                     productAdapter.updateData(filteredProducts);
+                    productAdapter.notifyDataSetChanged();
                 }
                 return true;
             }
 
         });
+        searchView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                scanner();
+                return true;
+            }
+        });
+
+    }
+    private void scanner() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("volume up for flash light ");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
     }
 
     private List<Product> filterProducts(List<Product> products, String query) {

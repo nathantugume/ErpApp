@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- item_stock.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- Product Name -->
+    <TextView
+        android:id="@+id/productNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Product Name"
+        android:textStyle="bold" />
+
+    <!-- Quantity -->
+    <EditText
+        android:id="@+id/quantityEditText"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productNameTextView"
+        android:layout_marginTop="8dp"
+        android:inputType="number"
+        android:hint="Quantity"
+        />
+
+    <!-- Price -->
+    <EditText
+        android:id="@+id/priceEditText"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productNameTextView"
+        android:layout_toEndOf="@id/quantityEditText"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:hint="Price" />
+
+
+
+</RelativeLayout>

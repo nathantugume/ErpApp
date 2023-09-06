@@ -43,8 +43,8 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
     private RecyclerView recyclerView;
     private TextView totalPriceTextView;
 
-    private List<Product> productList = new ArrayList<>();
-    private List<Product> salesList = new ArrayList<>(); // List to store selected products
+    private final List<Product> productList = new ArrayList<>();
+    private final List<Product> salesList = new ArrayList<>(); // List to store selected products
     private SalesProductAdapter productAdapter;
     private FirebaseFirestore firestore; // Declare Firestore instance
     private EditText etBarcodeOrSearch;

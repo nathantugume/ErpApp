@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
     <com.google.android.material.textfield.TextInputLayout
 
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/category_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        android:hint="@string/category_name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/categoryNameEditText"
@@ -23,15 +23,15 @@
 
     <com.google.android.material.textfield.TextInputLayout
 
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/add_description"
-        app:helperText="*Please don't exceed 40 characters"
-        app:helperTextEnabled="true"
-        app:helperTextTextColor="#673AB7"
         app:counterEnabled="true"
         app:counterMaxLength="40"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        app:helperText="*Please don't exceed 40 characters"
+        app:helperTextEnabled="true"
+        app:helperTextTextColor="#673AB7">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/categoryDescEditText"

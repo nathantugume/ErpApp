@@ -9,9 +9,9 @@ import com.example.erpapp.adapters.SalesProductAdapter;
 import java.util.List;
 
 public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
-    private List<Product> productList;
-    private SalesProductAdapter productAdapter;
-    private List<Product> salesList;
+    private final List<Product> productList;
+    private final SalesProductAdapter productAdapter;
+    private final List<Product> salesList;
 
     public SwipeToDeleteCallback(List<Product> productList, SalesProductAdapter productAdapter, List<Product> salesList) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);

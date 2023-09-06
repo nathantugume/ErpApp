@@ -33,6 +33,15 @@
     <string name="save_sale_details_button">save sale details button</string>
     <string name="expenses">Expenses</string>
     <string name="stock">Stock</string>
+    <string name="add_purchases_icon">add purchases icon</string>
+    <string name="add_purchases">Add Purchases</string>
+    <string name="add_stock_items">Add stock items</string>
+    <string name="add_stock_items_description">add stock items description</string>
+    <string name="modify_stock">Modify Stock</string>
+    <string name="edit_stock_items">Edit Stock items</string>
+    <string name="modify_stock_icon">modify stock icon</string>
+    <string name="settings">Settings</string>
+    <string name="sign_out">Sign Out</string>
 
 
 </resources>

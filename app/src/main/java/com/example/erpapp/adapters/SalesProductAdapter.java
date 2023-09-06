@@ -16,9 +16,9 @@ import java.util.List;
 
 public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapter.ViewHolder> {
 
-    private OnItemClickListener itemClickListener;
-    private OnItemRemovedListener itemRemovedListener;
-    private List<Product> productList;
+    private final OnItemClickListener itemClickListener;
+    private final OnItemRemovedListener itemRemovedListener;
+    private final List<Product> productList;
     private List<Product> salesList;
 
     public SalesProductAdapter(List<Product> productList, OnItemClickListener itemClickListener, OnItemRemovedListener itemRemovedListener) {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.sales.SalesActivity">
+    tools:context=".ui.stock.StockActivity">
     <!-- Top app bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/topbarLayout"
@@ -20,7 +20,7 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:menu="@menu/top_app_bar"
             app:navigationIcon="@drawable/back"
-            app:title="Sales"
+            app:title="Add Stock"
             app:titleCentered="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -39,7 +39,7 @@
         tools:listitem="@layout/recycler_view_item" />
 
     <TextView
-        android:id="@+id/totalPriceTextView"
+        android:id="@+id/totalStock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -47,9 +47,23 @@
         android:padding="16dp"
         android:text="Total: Ugx 0.00"
         android:textStyle="bold" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="24dp"
+        android:tooltipText="refresh"
+        android:layout_marginBottom="225dp"
+        android:contentDescription="@string/save_sale_details_button"
+        android:labelFor="@+id/fabSaveProduct"
+        android:src="@drawable/ic_refresh"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddProduct"
+        android:id="@+id/fabAddStock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -57,17 +71,19 @@
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="80dp"
+        android:tooltipText="add items"
         android:contentDescription="@string/add_sale_item_button"
         android:src="@drawable/ic_add" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabSaveProduct"
+        android:id="@+id/fabSaveStock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="24dp"
+        android:tooltipText="Save"
         android:layout_marginBottom="150dp"
         android:contentDescription="@string/save_sale_details_button"
         android:labelFor="@+id/fabSaveProduct"

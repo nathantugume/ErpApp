@@ -25,7 +25,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private CategoryAdapter categoryAdapter;
-    private List<DocumentSnapshot> categoryList = new ArrayList<>();
+    private final List<DocumentSnapshot> categoryList = new ArrayList<>();
 
     private MaterialToolbar toolbar;
     private ShimmerFrameLayout shimmerFrameLayout;

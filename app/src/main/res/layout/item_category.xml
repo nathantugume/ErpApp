@@ -1,39 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- res/layout/item_category.xml -->
-<com.google.android.material.card.MaterialCardView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+
+
+
+<com.google.android.material.card.MaterialCardView
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
     app:cardElevation="4dp"
     app:cardCornerRadius="8dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/categoryNameTextView"
-            android:layout_width="wrap_content"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="#000"
-            android:textAllCaps="true"
-            android:text="Category Name" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/categoryDescList"
+            <TextView
+                android:id="@+id/categoryNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#000"
+                android:textAllCaps="true"
+                android:text="Category Name" />
+
+            <TextView
+                android:id="@+id/categoryDescList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#666"
+                android:text="Category Description" />
+
+        </LinearLayout>
+
+        <!-- Add more views if needed -->
+        <ImageView
+            android:id="@+id/menuIcon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#666"
-            android:text="Category Description" />
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_more" />
+    </RelativeLayout>
 
-    </LinearLayout>
 
-    <!-- Add more views if needed -->
+
+
 
 </com.google.android.material.card.MaterialCardView>
+</RelativeLayout>
