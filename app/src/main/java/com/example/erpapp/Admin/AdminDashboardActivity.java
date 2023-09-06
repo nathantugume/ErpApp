@@ -12,12 +12,12 @@ import android.view.View;
 import com.example.erpapp.R;
 import com.example.erpapp.ui.Users.UsersActivity;
 import com.example.erpapp.ui.expenses.ExpensesActivity;
-import com.example.erpapp.ui.products.CategoryActivity;
+import com.example.erpapp.ui.categories.CategoryActivity;
 import com.example.erpapp.ui.products.ProductsActivity;
 import com.example.erpapp.ui.reports.ReportsActivity;
 import com.example.erpapp.ui.sales.SalesActivity;
 import com.example.erpapp.ui.settings.SettingsActivity;
-import com.example.erpapp.ui.stock.StockActivity;
+import com.example.erpapp.ui.stock.AddStockActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class AdminDashboardActivity extends AppCompatActivity {
@@ -66,7 +66,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         stock_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AdminDashboardActivity.this, StockActivity.class);
+                Intent intent = new Intent(getApplicationContext(), AddStockActivity.class);
                 startActivity(intent);
             }
         });

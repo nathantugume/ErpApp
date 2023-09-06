@@ -1,4 +1,4 @@
-package com.example.erpapp.ui.products;
+package com.example.erpapp.ui.categories;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
