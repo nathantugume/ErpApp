@@ -2,6 +2,9 @@ package com.example.erpapp.ui.stock;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,39 +22,41 @@ import com.example.erpapp.Classes.Purchase;
 import com.example.erpapp.Classes.StockItem;
 import com.example.erpapp.Fragments.CaptureAct;
 import com.example.erpapp.R;
+import com.example.erpapp.adapters.OnPriceChangeListener;
 import com.example.erpapp.adapters.StockItemAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class AddStockActivity extends AppCompatActivity implements StockItem.OnQuantityChangeListener {
+public class AddStockActivity extends AppCompatActivity implements StockItem.OnQuantityChangeListener,OnPriceChangeListener {
 
     private RecyclerView recyclerView;
     private StockItemAdapter stockItemAdapter;
     private List<StockItem> stockItemList = new ArrayList<>();
     private EditText etBarcodeOrSearch;
-    private TextView totalPriceEdt;
-
-    private double totalPrice = 0.0;
-    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    private CollectionReference productsCollection = firestore.collection("products");
-    private CollectionReference purchasesCollection = firestore.collection("purchases");
-
-
-    private Product product;
 
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
             etBarcodeOrSearch.setText(result.getContents());
         }
     });
+    private TextView totalPriceEdt;
+    private double totalPrice = 0.0;
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    private CollectionReference productsCollection = firestore.collection("products");
+    private CollectionReference purchasesCollection = firestore.collection("purchases");
+    private Product product;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +65,12 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        stockItemAdapter = new StockItemAdapter(stockItemList, this);
+        stockItemAdapter = new StockItemAdapter(stockItemList, this, this::onItemDeleted, this::onPriceChange);
 
         recyclerView.setAdapter(stockItemAdapter);
         totalPriceEdt = findViewById(R.id.totalStock);
-
+        // Attach swipe-to-delete functionality to the RecyclerView
+        stockItemAdapter.attachItemTouchHelperToRecyclerView(recyclerView);
         // ... Other initialization code ...
 
         FloatingActionButton fabAddItem = findViewById(R.id.fabAddStock);
@@ -193,10 +199,22 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
 
     private void addItemToStock(StockItem stockItem) {
         // Add the StockItem to the list and update the RecyclerView
-        stockItem.setPurchaseDate(new Date());
+        // Create a SimpleDateFormat object with the desired date format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
 
-        stockItemList.add(stockItem);
-        stockItemAdapter.notifyDataSetChanged();
+        // Get the current date in the desired format
+        String formattedDate = dateFormat.format(new Date());
+
+        // Parse the formatted date string to obtain a Date object
+        Date parsedDate = null;
+        try {
+            parsedDate = dateFormat.parse(formattedDate);
+        } catch (ParseException e) {
+            // Handle the parse exception, if needed
+        }
+
+        // Set the StockItem's purchase date using the parsed Date
+        stockItem.setPurchaseDate(parsedDate);
 
         // Calculate the total price after adding the item
         calculateTotalPrice();
@@ -218,7 +236,13 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
         stockItem.setQuantity(newQuantity);
 
         // Update the RecyclerView to reflect the new quantity
-        stockItemAdapter.notifyItemChanged(position);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                stockItemAdapter.notifyItemChanged(position);
+            }
+        });
+
 
         // Recalculate the total price and update the UI
         calculateTotalPrice();
@@ -228,12 +252,14 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
         for (StockItem item : stockItemList) {
             int newQuantity = item.getQuantity();
             String productName = item.getProductName();
+            int newPrice = (int) item.getPrice();
+
 
             // 1. Update the product quantity in the "products" collection
-            updateProductQuantityInDatabase(productName, newQuantity);
+            updateProductQuantityInDatabase(productName, newQuantity,newPrice);
 
             // 2. Add a purchase record to the "purchases" collection
-            addPurchaseRecord(productName, newQuantity, item.getPurchaseDate());
+            addPurchaseRecord(productName, newQuantity, item.getPurchaseDate(),newQuantity,newPrice);
         }
 
         // Clear the stockItemList (if needed)
@@ -247,7 +273,8 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
         Toast.makeText(this, "Stock saved successfully!", Toast.LENGTH_SHORT).show();
 
     }
-    private void updateProductQuantityInDatabase(String productName, int newQuantity) {
+
+    private void updateProductQuantityInDatabase(String productName, int newQuantity, int newPrice) {
         // Update the product quantity in the "products" collection
         productsCollection
                 .whereEqualTo("product_name", productName)
@@ -260,9 +287,12 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
                             int currentQuantity = product.getQuantity();
                             int updatedQuantity = currentQuantity + newQuantity;
 
+
                             // Update the product quantity
-                            productsCollection                                    .document(documentId)
-                                    .update("quantity", updatedQuantity);
+                            productsCollection.document(documentId)
+                                    .update("quantity", updatedQuantity,
+                                            "buying_price",newPrice);
+
                         }
                     }
                 })
@@ -271,9 +301,9 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
                 });
     }
 
-    private void addPurchaseRecord(String productName, int quantity, Date purchaseDate) {
+    private void addPurchaseRecord(String productName, int quantity, Date purchaseDate, int newQuantity, int newPrice) {
         // Create a new purchase record and add it to the "purchases" collection
-        Purchase purchase = new Purchase(productName, quantity, purchaseDate);
+        Purchase purchase = new Purchase(productName, quantity, purchaseDate,newPrice);
 
         purchasesCollection.add(purchase)
                 .addOnSuccessListener(documentReference -> {
@@ -289,4 +319,58 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
         updateStockItemQuantity(position, newQuantity);
 
     }
+
+    @Override
+    public void onItemDeleted(int position, StockItem deletedItem) {
+
+            // Store the deleted item temporarily
+            final StockItem deletedItemTemp = deletedItem;
+            final int deletedItemPosition = position;
+
+
+            // Show an "Undo" Snackbar
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.recyclerView),"Item deleted", Snackbar.LENGTH_LONG);
+            snackbar.setAction("Undo", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // User clicked "Undo," so add the item back to the list at the same position
+                    if (deletedItemPosition >= 0 && deletedItemPosition <= stockItemList.size()) {
+                        stockItemList.add(deletedItemPosition, deletedItemTemp);
+                        stockItemAdapter.notifyItemInserted(deletedItemPosition);
+                        // Recalculate the total price again
+                     calculateTotalPrice();
+                    }
+                }
+            });
+
+
+
+            snackbar.show();
+            calculateTotalPrice();
+        }
+
+    @Override
+    public void onPriceChange(int position, int newPrice) {
+        try {
+            StockItem item = stockItemList.get(position);
+
+            // Update the price for the item at the given position
+            item.setPrice(newPrice);
+
+            // Recalculate the total price
+            calculateTotalPrice();
+
+            // Notify the adapter that the data at the specified position has changed
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    stockItemAdapter.notifyItemChanged(position);
+                }
+            });
+        } catch (IndexOutOfBoundsException e) {
+            // Handle the exception (e.g., log or display an error message)
+            Log.d("Error","sorry"+e);
+        }
+    }
+
 }

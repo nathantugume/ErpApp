@@ -32,6 +32,8 @@
         android:layout_below="@id/productNameTextView"
         android:layout_toEndOf="@id/quantityEditText"
         android:layout_marginStart="8dp"
+        android:inputType="text"
+        android:allowUndo="true"
         android:layout_marginTop="8dp"
         android:hint="Price" />
 

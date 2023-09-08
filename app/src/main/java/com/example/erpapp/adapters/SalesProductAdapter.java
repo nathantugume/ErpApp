@@ -24,8 +24,9 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
     public SalesProductAdapter(List<Product> productList, OnItemClickListener itemClickListener, OnItemRemovedListener itemRemovedListener) {
         this.productList = productList;
         this.itemClickListener = itemClickListener;
-        this.itemRemovedListener =itemRemovedListener;
+        this.itemRemovedListener = itemRemovedListener;
     }
+
     // Add a setter method for salesList
     public void setSalesList(List<Product> salesList) {
         this.salesList = salesList;
@@ -54,8 +55,6 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
 
 
     }
-
-
 
 
     @Override
@@ -114,12 +113,14 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
 
     public interface OnItemClickListener {
         void onItemClick(Product product);
+
         void onQuantityChange(Product product, int newQuantity);
 
         int getQuantity(Product product);
 
         int getPrice(Product product);
     }
+
     public interface OnItemRemovedListener {
 
 

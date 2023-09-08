@@ -103,7 +103,6 @@ public class AddProductDialogFragment extends DialogFragment {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         selectedCategory = (String) parent.getSelectedItem();
-                        Log.d("selectedCategory", "category" + selectedCategory);
                     }
 
                     @Override

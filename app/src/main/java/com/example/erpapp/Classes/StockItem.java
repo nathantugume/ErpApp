@@ -53,6 +53,8 @@ public class StockItem {
 
     public interface OnQuantityChangeListener {
         void onQuantityChange(int position, int newQuantity);
+
+        void onItemDeleted(int position, StockItem deletedItem);
     }
 
 
@@ -63,5 +65,8 @@ public class StockItem {
     // Calculate the total price of this stock item
     public int calculateTotalPrice() {
         return (int) (quantity * price);
+    }
+    public interface OnItemDeletedListener {
+        void onItemDeleted(int position, StockItem deletedItem);
     }
 }

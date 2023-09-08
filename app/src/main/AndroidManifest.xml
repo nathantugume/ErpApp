@@ -19,6 +19,12 @@
         android:theme="@style/Theme.ErpApp"
         tools:targetApi="31">
         <activity
+            android:name=".ui.expenses.AddExpensesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.expenses.AccountsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.stock.AddStockActivity"
             android:exported="false" />
         <activity

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="transaction_types">
+        <item>Expenses</item>
+        <item>Income</item>
+    </string-array>
+
+    <string-array name="payment_types">
+        <item>Cash</item>
+        <item>Credit Card</item>
+        <item>Bank</item>
+        <item>Check</item>
+    </string-array>
+</resources>

@@ -56,9 +56,11 @@ public class AddCategoryDialogFragment extends DialogFragment {
                 if (desc.isEmpty()){
                     categoryDesc.setError("please enter category details");
                     categoryDesc.setFocusable(true);
+                    categoryDesc.requestFocus();
                 } else if (categoryName.isEmpty()) {
                     categoryNameEditText.setError("please enter category name");
                     categoryNameEditText.setFocusable(true);
+                    categoryNameEditText.requestFocus();
                 }else {
                     // Add category to Firestore with custom category ID
                     String categoryId = firestore.collection("categories").document().getId(); // Generate category ID
