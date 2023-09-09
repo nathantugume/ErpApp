@@ -22,7 +22,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class AddExpenseFragment extends DialogFragment {
@@ -43,15 +46,50 @@ public class AddExpenseFragment extends DialogFragment {
                 .inflate(R.layout.fragment_add_expense, null);
 
         paidToEditText = view.findViewById(R.id.paidToEditText);
-        paymentTypeSpinner = view.findViewById(R.id.payment_typeSpinner);
         paymentDescEditText = view.findViewById(R.id.paymentDescEditText);
         amountEditText = view.findViewById(R.id.amountEditText);
         referenceNoEditText = view.findViewById(R.id.referenceNoEditText);
+
+        //  spinners
+        paymentTypeSpinner = view.findViewById(R.id.payment_typeSpinner);
         expenseAccountSpinner = view.findViewById(R.id.expenseAccountSpinner);
+        // payment Type Spinner
+        // Create an ArrayAdapter using the custom layout for the Spinner items
+        String[] payment_types= {"Cash","Credit card","Cheque","Mobile money"};
+        ArrayAdapter<CharSequence> payment  = new ArrayAdapter<CharSequence>(getContext(),
+                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item
+                ,payment_types);
+        payment.setDropDownViewResource(com.google.android.material.R.layout.support_simple_spinner_dropdown_item);
+        paymentTypeSpinner.setAdapter(payment);
 
         LoadExpensesTask loadExpensesTask = new LoadExpensesTask(getContext(), expenseAccountSpinner);
         loadExpensesTask.execute();
 
+            // Getting spinner selected item
+        expenseAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedAccount = (String) adapterView.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                //      do nothing
+            }
+        });
+        paymentTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedPaymentMethod = (String) adapterView.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        //        setting the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setView(view)
                 .setTitle("Add Expenses")
@@ -66,56 +104,32 @@ public class AddExpenseFragment extends DialogFragment {
                 paymentDesc = paymentDescEditText.getText().toString();
                 amount = amountEditText.getText().toString();
                 reference = referenceNoEditText.getText().toString();
-                    //  set accounts spiner
-                expenseAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                        selectedAccount = (String) adapterView.getSelectedItem();
-                    }
+                    //  set accounts spinner
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-                                //      do nothing
-                    }
-                });
 
-                // payment Type Spinner
-                // Create an ArrayAdapter using the custom layout for the Spinner items
-                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                        view.getContext(),
-                       R.array.payment_types,
-                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
-
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-                // Set the adapter to the Spinner
-                paymentTypeSpinner.setAdapter(adapter);
-
-                // Set an item selection listener if needed
-                paymentTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // Handle the selected payment method
-                        selectedPaymentMethod = parentView.getItemAtPosition(position).toString();
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // Handle nothing selected, if needed
-                    }
-                });
+                // Get the current date and time
+                Date currentDate = new Date();
+                // Create a SimpleDateFormat or any date/time formatting method to format the date and time as needed
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                String formattedDate = dateFormat.format(currentDate);
+                String formattedTime = timeFormat.format(currentDate);
 
                 if (validateInput()) {
                     String expenseId = firestore.collection("expenses").document().getId();
                     DocumentReference expenseRef = firestore.collection("expenses").document(expenseId);
 
+                    Double amount_paid = Double.valueOf(amount);
                     Map<String, Object> expenseData = new HashMap<>();
+                    expenseData.put("paid_to",paidTo);
                     expenseData.put("expenseId", expenseId);
                     expenseData.put("payment_desc", paymentDesc);
                     expenseData.put("payment_type", selectedPaymentMethod);
-                    expenseData.put("amount", amount);
+                    expenseData.put("amount", amount_paid);
                     expenseData.put("reference", reference);
                     expenseData.put("expense_account", selectedAccount);
+                    expenseData.put("date",formattedDate);
+                    expenseData.put("time",formattedTime);
 
                     expenseRef.set(expenseData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {

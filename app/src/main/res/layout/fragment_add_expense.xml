@@ -20,24 +20,22 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- custom_spinner_item.xml -->
     <TextView
         android:id="@android:id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:layout_marginTop="2dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/select_payment_method"
     />
-
-
     <Spinner
-        android:id="@+id/payment_typeSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:id="@+id/payment_typeSpinner"
         />
+
+
+
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -92,8 +90,8 @@
         android:id="@android:id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:layout_marginTop= "5dp"
+        android:layout_marginBottom="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/select_expense_account"
         />

@@ -39,12 +39,12 @@ import java.util.Objects;
 public class AddProductDialogFragment extends DialogFragment {
 
 
+    private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private TextInputEditText productNameEditText;
     private TextInputEditText productDescEditText;
     private TextInputEditText priceEditText, BpriceEditText;
     private TextInputEditText quantityEditText;
     private TextInputEditText barcodeEditText;
-    private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
 
