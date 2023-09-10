@@ -52,6 +52,13 @@
     <string name="_13_00_00">13:00:00</string>
     <string name="time">Time:</string>
     <string name="_20">20</string>
+    <string name="accounts">Accounts</string>
+    <string name="balance_sheet_icon">balance sheet icon</string>
+    <string name="balance_sheet">Balance Sheet</string>
+    <string name="stock_report_icon">Stock report icon</string>
+    <string name="sales_report">Sales Report</string>
+    <string name="cash_flow_statement_icon">cash flow statement icon</string>
+    <string name="from_yyyy_mm_dd">From: yyyy-MM-dd</string>
 
 
 </resources>

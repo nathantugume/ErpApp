@@ -19,6 +19,9 @@
         android:theme="@style/Theme.ErpApp"
         tools:targetApi="31">
         <activity
+            android:name=".ui.reports.CashFlowReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.expenses.AddExpensesActivity"
             android:exported="false" />
         <activity

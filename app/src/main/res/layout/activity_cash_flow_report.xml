@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="392dp"
+        android:layout_height="520dp"
+        android:orientation="vertical">
+        <!-- Top app bar -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/topbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:liftOnScroll="true">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:menu="@menu/top_app_bar"
+                app:navigationIcon="@drawable/back"
+                app:title="Cash Flow Statement"
+                app:titleCentered="true" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Select period" />
+
+            <Spinner
+                android:id="@+id/timePeriodSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Button to open DatePicker dialog for fromDate -->
+            <Button
+                android:id="@+id/fromDateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/from_yyyy_mm_dd" />
+
+            <!-- Button to open DatePicker dialog for toDate -->
+            <Button
+                android:id="@+id/toDateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="To: yyyy-MM-dd" />
+
+
+        </LinearLayout>
+
+
+        <!-- RecyclerView to display cash flow data -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cashFlowRecyclerView"
+            android:layout_width="408dp"
+            android:layout_height="457dp"
+            android:layout_below="@+id/searchButton"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/totalInFlowTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Total Cash In Flow: Ugx 0.00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="80dp"
+        />
+    <TextView
+        android:id="@+id/totalOutFlowTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Total Out Flow: Ugx 0.00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="50dp"
+        />
+    <TextView
+        android:id="@+id/netCashFlowTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Net Cash Flow: Ugx 0.00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="20dp"
+        />
+
+
+
+</RelativeLayout>
