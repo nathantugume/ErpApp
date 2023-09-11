@@ -59,6 +59,13 @@
     <string name="sales_report">Sales Report</string>
     <string name="cash_flow_statement_icon">cash flow statement icon</string>
     <string name="from_yyyy_mm_dd">From: yyyy-MM-dd</string>
+    <string name="from_date">From Date</string>
+    <string name="total_count">Total Count</string>
+    <string name="total_sales_amount">Total Sales Amount:</string>
+    <string name="sale_date">Sale Date:</string>
+    <string name="product">Product:</string>
+    <string name="select_from_date">Select From Date</string>
+    <string name="select_to_date">Select To Date</string>
 
 
 </resources>

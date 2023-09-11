@@ -17,6 +17,9 @@ public class ReportsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reports);
 
         MaterialCardView cash_flow_report = findViewById(R.id.cashFlowCard);
+        MaterialCardView balance_sheet = findViewById(R.id.balanceSheet_card);
+        MaterialCardView sales_report = findViewById(R.id.sales_report);
+        MaterialCardView stock_report = findViewById(R.id.stock_report_card);
         cash_flow_report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -24,6 +27,36 @@ public class ReportsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        // balance sheet
+        balance_sheet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ReportsActivity.this, BalanceSheetActivity.class);
+                startActivity(intent);
+            }
+        });
+        // sales report
+        sales_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ReportsActivity.this, SalesReportActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        stock_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ReportsActivity.this,StockReportActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+
+
 
     }
 }

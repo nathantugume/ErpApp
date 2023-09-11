@@ -19,6 +19,15 @@
         android:theme="@style/Theme.ErpApp"
         tools:targetApi="31">
         <activity
+            android:name=".ui.reports.StockReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.reports.SalesReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.reports.BalanceSheetActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.reports.CashFlowReportActivity"
             android:exported="false" />
         <activity
