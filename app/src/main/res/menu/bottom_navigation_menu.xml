@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_home"
         android:title="@string/home"/>
     <item
-        android:id="@+id/sales"
+        android:id="@+id/category"
         android:enabled="true"
         android:icon="@drawable/ic_category"
         android:title="@string/category"/>
@@ -20,6 +20,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_product"
         android:title="Products"/>
+
 
 
 </menu>

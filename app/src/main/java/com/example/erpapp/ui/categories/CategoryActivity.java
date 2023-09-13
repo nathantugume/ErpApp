@@ -1,20 +1,28 @@
 package com.example.erpapp.ui.categories;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.DefaultItemAnimator; // Import this
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.example.erpapp.Admin.AdminDashboardActivity;
 import com.example.erpapp.R;
 import com.example.erpapp.adapters.CategoryAdapter;
 import com.example.erpapp.Fragments.AddCategoryDialogFragment;
+import com.example.erpapp.ui.products.ProductsActivity;
+import com.example.erpapp.ui.reports.ReportsActivity;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -35,6 +43,32 @@ public class CategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
         shimmerFrameLayout = findViewById(R.id.shimmerLayout);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener(){
+
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                if(item.getItemId() == R.id.home){
+                    Intent intent = new Intent(CategoryActivity.this, AdminDashboardActivity.class);
+                    startActivity(intent);
+                }else if(item.getItemId() == R.id.category){
+                    Intent intent = new Intent(CategoryActivity.this, CategoryActivity.class);
+                    startActivity(intent);
+                }
+                else if(item.getItemId() == R.id.analytics){
+                    Intent intent = new Intent(CategoryActivity.this, ReportsActivity.class);
+                    startActivity(intent);
+                }
+                else if(item.getItemId() == R.id.product){
+                    Intent intent = new Intent(CategoryActivity.this, ProductsActivity.class);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
 
         toolbar = findViewById(R.id.topAppBar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:background="@color/white"
+    tools:context=".LauncherActivity">
+
+    <ImageView
+        android:id="@+id/appIconImageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/ic_app_icon" />
+
+
+    <TextView
+        android:id="@+id/appNameTextView"
+        android:layout_width="258dp"
+        android:layout_height="67dp"
+        android:layout_below="@id/appIconImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="51dp"
+        android:text=" Sales Tracking Mobile Application"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/appTaglineTextView"
+        android:layout_width="match_parent"
+        android:layout_height="39dp"
+        android:layout_below="@id/appNameTextView"
+        android:layout_marginTop="25dp"
+        android:text="Streamline Sales Tracking"
+        android:textAlignment="center"
+        android:textColor="@color/ic_app_icon_background"
+        android:textSize="20sp" />
+
+<com.google.android.material.progressindicator.LinearProgressIndicator
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/launcherProgress"/>
+
+
+</RelativeLayout>

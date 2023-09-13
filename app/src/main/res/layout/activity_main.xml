@@ -8,19 +8,19 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="420dp"
-        android:layout_height="364dp"
+        android:layout_width="451dp"
+        android:layout_height="434dp"
         android:contentDescription="TODO"
         android:scaleType="fitXY"
-        android:src="@mipmap/bg_home"
+        android:src="@mipmap/ic_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
-        android:layout_width="409dp"
-        android:layout_height="487dp"
-        android:layout_marginStart="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="382dp"
+
         android:background="@drawable/rounded_corner_shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,11 +32,12 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/glass_card"
-            android:layout_width="wrap_content"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="75dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="60dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp">
 
@@ -48,39 +49,38 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Welcome"
-                    android:textColor="#5F2FB3"
-                    android:textSize="40sp"
+                    android:text="Erp App"
                     android:textAlignment="center"
-                    android:background="@drawable/glass_background" />
+                    android:textColor="#5F2FB3"
+                    android:textSize="40sp" />
 
-                <TextView
-                    android:id="@+id/desc_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/welcome_message"
-                    android:textSize="16sp"
-                    android:layout_margin="10dp"
-                    android:textAlignment="textStart"
-                    android:textStyle="bold"
-                    />
             </LinearLayout>
 
 
         </androidx.cardview.widget.CardView>
 
-
-
+        <TextView
+            android:id="@+id/desc_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/glass_card"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/welcome_to_erp_mobile_app_n_please_create_an_account_to_use_our_services"
+            android:textAlignment="center"
+            android:textSize="22sp"
+            android:textStyle="bold" />
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
-            android:layout_marginTop="20dp"
-            android:textSize="30sp"
-            android:layout_below="@id/glass_card"
+            android:layout_below="@id/desc_text"
             android:layout_centerHorizontal="true"
-            />
+            android:layout_marginTop="20dp"
+            android:text="Create Account"
+            android:textSize="30sp" />
 
     </RelativeLayout>
 

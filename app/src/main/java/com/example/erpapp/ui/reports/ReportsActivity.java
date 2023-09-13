@@ -1,13 +1,22 @@
 package com.example.erpapp.ui.reports;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toolbar;
 
+import com.example.erpapp.Admin.AdminDashboardActivity;
 import com.example.erpapp.R;
+import com.example.erpapp.ui.categories.CategoryActivity;
+import com.example.erpapp.ui.products.ProductsActivity;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.navigation.NavigationBarView;
 
 public class ReportsActivity extends AppCompatActivity {
 
@@ -15,6 +24,43 @@ public class ReportsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener(){
+
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                if(item.getItemId() == R.id.home){
+                    Intent intent = new Intent(ReportsActivity.this, AdminDashboardActivity.class);
+                    startActivity(intent);
+                }else if(item.getItemId() == R.id.category){
+                    Intent intent = new Intent(ReportsActivity.this, CategoryActivity.class);
+                    startActivity(intent);
+                }
+                else if(item.getItemId() == R.id.analytics){
+                    Intent intent = new Intent(ReportsActivity.this, ReportsActivity.class);
+                    startActivity(intent);
+                }
+                else if(item.getItemId() == R.id.product){
+                    Intent intent = new Intent(ReportsActivity.this, ProductsActivity.class);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
+
+        MaterialToolbar toolbar;
+
+        //        toolbar
+        toolbar = findViewById(R.id.topAppBar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         MaterialCardView cash_flow_report = findViewById(R.id.cashFlowCard);
         MaterialCardView balance_sheet = findViewById(R.id.balanceSheet_card);
@@ -27,7 +73,6 @@ public class ReportsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         // balance sheet
         balance_sheet.setOnClickListener(new View.OnClickListener() {

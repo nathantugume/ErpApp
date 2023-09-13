@@ -66,6 +66,9 @@
     <string name="product">Product:</string>
     <string name="select_from_date">Select From Date</string>
     <string name="select_to_date">Select To Date</string>
+    <string name="welcome_to_erp_mobile_app_n_please_create_an_account_to_use_our_services">Welcome To Erp Mobile App\n please Create an Account to Use Our Services</string>
+    <string name="log_out">Log out</string>
+    <string name="email">Email:</string>
 
 
 </resources>

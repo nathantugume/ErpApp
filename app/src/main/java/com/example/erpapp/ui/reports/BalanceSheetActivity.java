@@ -1,20 +1,30 @@
 package com.example.erpapp.ui.reports;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
+import com.example.erpapp.Admin.AdminDashboardActivity;
 import com.example.erpapp.R;
+import com.example.erpapp.ui.categories.CategoryActivity;
+import com.example.erpapp.ui.products.ProductsActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -45,6 +55,42 @@ public class BalanceSheetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_balance_sheet);
 
         // Initialize UI components
+        MaterialToolbar toolbar;
+
+        //        toolbar
+        toolbar = findViewById(R.id.topAppBar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener(){
+
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                if(item.getItemId() == R.id.home){
+                    Intent intent = new Intent(BalanceSheetActivity.this, AdminDashboardActivity.class);
+                    startActivity(intent);
+                }else if(item.getItemId() == R.id.category){
+                    Intent intent = new Intent(BalanceSheetActivity.this, CategoryActivity.class);
+                    startActivity(intent);
+                }
+                else if(item.getItemId() == R.id.analytics){
+                    Intent intent = new Intent(BalanceSheetActivity.this, ReportsActivity.class);
+                    startActivity(intent);
+                }
+                else if(item.getItemId() == R.id.product){
+                    Intent intent = new Intent(BalanceSheetActivity.this, ProductsActivity.class);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
 
 // Initialize UI components
         monthYearButton = findViewById(R.id.monthYearButton);

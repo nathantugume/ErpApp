@@ -9,11 +9,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.erpapp.Classes.Product;
 import com.example.erpapp.Classes.Sale;
@@ -21,6 +24,7 @@ import com.example.erpapp.Classes.SwipeToDeleteCallback;
 import com.example.erpapp.Fragments.CaptureAct;
 import com.example.erpapp.R;
 import com.example.erpapp.adapters.SalesProductAdapter;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -63,6 +67,16 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sales);
         firestore = FirebaseFirestore.getInstance();
+        MaterialToolbar toolbar;
+
+        //        toolbar
+        toolbar = findViewById(R.id.topAppBar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         FloatingActionButton fabAddProduct = findViewById(R.id.fabAddProduct);
         FloatingActionButton fabSaveProduct = findViewById(R.id.fabSaveProduct);
@@ -339,5 +353,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
     public int getPrice(Product product) {
         return product.getPrice();
     }
+
 
 }

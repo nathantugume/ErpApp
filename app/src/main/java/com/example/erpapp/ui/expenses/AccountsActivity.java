@@ -1,19 +1,30 @@
 package com.example.erpapp.ui.expenses;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
+import com.example.erpapp.Admin.AdminDashboardActivity;
 import com.example.erpapp.Classes.AccountItem;
 import com.example.erpapp.Fragments.AddAccountsDialogFragment;
 import com.example.erpapp.Fragments.AddCategoryDialogFragment;
 import com.example.erpapp.R;
 import com.example.erpapp.adapters.AccountAdapter;
+import com.example.erpapp.ui.categories.CategoryActivity;
+import com.example.erpapp.ui.products.ProductsActivity;
+import com.example.erpapp.ui.reports.ReportsActivity;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -29,6 +40,42 @@ public class AccountsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts);
+
+        MaterialToolbar toolbar;
+        //        toolbar
+        toolbar = findViewById(R.id.topAppBar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener(){
+
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                if(item.getItemId() == R.id.home){
+                    Intent intent = new Intent(AccountsActivity.this, AdminDashboardActivity.class);
+                    startActivity(intent);
+                }else if(item.getItemId() == R.id.category){
+                    Intent intent = new Intent(AccountsActivity.this, CategoryActivity.class);
+                    startActivity(intent);
+                }
+                else if(item.getItemId() == R.id.analytics){
+                    Intent intent = new Intent(AccountsActivity.this, ReportsActivity.class);
+                    startActivity(intent);
+                }
+                else if(item.getItemId() == R.id.product){
+                    Intent intent = new Intent(AccountsActivity.this, ProductsActivity.class);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
 
         // Initialize the RecyclerView
         recyclerView = findViewById(R.id.accountsRecyclerView);
