@@ -1,5 +1,7 @@
 package com.example.erpapp.ui.categories;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
@@ -8,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.DefaultItemAnimator; // Import this
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -107,7 +110,11 @@ public class CategoryActivity extends AppCompatActivity {
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmer();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        // Retrieve companyId from SharedPreferences
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        String companyId = sharedPreferences.getString("companyId", null);
         firestore.collection("categories")
+                .whereEqualTo("companyId",companyId)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     int initialSize = categoryList.size();

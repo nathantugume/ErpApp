@@ -1,6 +1,11 @@
 package com.example.erpapp.Classes;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -36,7 +41,11 @@ public class LoadCategoriesTask extends AsyncTask<Void, Void, List<String>> {
 
         try {
             Thread.sleep(0); // Simulate a delay (remove this in your actual code)
+            // Retrieve companyId from SharedPreferences
+            SharedPreferences sharedPreferences = contextWeakReference.get().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            String companyId = sharedPreferences.getString("companyId", null);
             firestore.collection("categories")
+                    .whereEqualTo("companyId",companyId)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {

@@ -69,6 +69,13 @@
     <string name="welcome_to_erp_mobile_app_n_please_create_an_account_to_use_our_services">Welcome To Erp Mobile App\n please Create an Account to Use Our Services</string>
     <string name="log_out">Log out</string>
     <string name="email">Email:</string>
+    <string name="allow_negative_stock_sales">Allow Negative Stock Sales</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="warn_stock_on">Warn Minimum Stock </string>
+    <string name="minimum_stock">Minimum Stock:</string>
+    <string name="enter_minimum_stock_level">Enter minimum stock level</string>
+    <string name="_5">5</string>
+    <string name="price">Price</string>
 
 
 </resources>

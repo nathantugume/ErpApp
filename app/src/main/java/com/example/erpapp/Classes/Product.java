@@ -4,11 +4,18 @@ public class Product {
     private String productId;
     private String product_name;
     private String product_desc;
+    private int wholeSalePrice;
     private int price;
     private int quantity;
     private String barcode;
     private int buying_price;
     private String category;
+    private String companyId;
+
+    private String saleType;
+    private String saleBy;
+
+
 
     // Constructors, getters, and setters
 
@@ -16,7 +23,8 @@ public class Product {
         // Default constructor required for Firebase Firestore
     }
 
-    public Product(String productId, String product_name, String product_desc, int price, int quantity, String barcode, int buying_price, String category) {
+    public Product(String productId, String product_name, String product_desc, int price, int quantity, String barcode,
+                   int buying_price, String category,int wholeSalePrice, String companyId) {
         this.productId = productId;
         this.product_name = product_name;
         this.product_desc = product_desc;
@@ -25,8 +33,27 @@ public class Product {
         this.barcode = barcode;
         this.buying_price = buying_price;
         this.category = category;
+        this.wholeSalePrice = wholeSalePrice;
+        this.companyId = companyId;
     }
 // Other getters and setters
+
+
+    public String getSaleType() {
+        return saleType;
+    }
+
+    public void setSaleType(String saleType) {
+        this.saleType = saleType;
+    }
+
+    public String getSaleBy() {
+        return saleBy;
+    }
+
+    public void setSaleBy(String saleBy) {
+        this.saleBy = saleBy;
+    }
 
     public String getProductId() {
         return productId;
@@ -90,5 +117,21 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public int getWholeSalePrice() {
+        return wholeSalePrice;
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public void setWholeSalePrice(int wholeSalePrice) {
+        this.wholeSalePrice = wholeSalePrice;
     }
 }

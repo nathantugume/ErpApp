@@ -10,6 +10,7 @@ public class Sale {
     private int quantity;
     private String saleDate;
     private String saleTime;
+    private String companyId;
 
     public Sale(){}
 
@@ -23,6 +24,16 @@ public class Sale {
         this.saleTime = saleTime;
     }
 
+    public Sale(String id, String productId, String product_name, int price, int quantityToSubtract, String formattedDate, String formattedTime, String saleBy, String saleType, String CompanyId) {
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
 
     public String getSaleId() {
         return saleId;
@@ -79,4 +90,6 @@ public class Sale {
     public void setSaleTime(String saleTime) {
         this.saleTime = saleTime;
     }
+
+
 }

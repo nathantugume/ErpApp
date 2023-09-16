@@ -144,10 +144,11 @@ public class SalesReportActivity extends AppCompatActivity {
                             String productName = document.getString("productName");
                             double saleAmount = document.getDouble("productPrice");
                             Long quantity =  document.getLong("quantity");
+                            String companyId = document.getString("companyId");
 
                             Log.d("product", "name "+productName);
 
-                            SalesItem salesItem = new SalesItem(saleDate, productName, saleAmount, quantity);
+                            SalesItem salesItem = new SalesItem(saleDate, productName, saleAmount, quantity,companyId);
                             salesItemList.add(salesItem);
                             totalSales += saleAmount*quantity;
                         }

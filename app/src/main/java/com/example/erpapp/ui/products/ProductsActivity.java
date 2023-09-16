@@ -1,5 +1,12 @@
 package com.example.erpapp.ui.products;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,25 +14,14 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.example.erpapp.Admin.AdminDashboardActivity;
 import com.example.erpapp.Classes.Product;
-import com.example.erpapp.Fragments.AddCategoryDialogFragment;
 import com.example.erpapp.Fragments.AddProductDialogFragment;
 import com.example.erpapp.Fragments.CaptureAct;
 import com.example.erpapp.R;
 import com.example.erpapp.adapters.ProductAdapter;
 import com.example.erpapp.ui.categories.CategoryActivity;
 import com.example.erpapp.ui.reports.ReportsActivity;
-import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -48,6 +44,7 @@ public class ProductsActivity extends AppCompatActivity {
     private SearchView searchView;
 
     private  ShimmerFrameLayout shimmerFrameLayout;
+    private TextView noProductsTextView;
 
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
@@ -59,6 +56,8 @@ public class ProductsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_products);
+
+        noProductsTextView = findViewById(R.id.noProductsTextView);
 
 //        toolbar
         toolbar = findViewById(R.id.topAppBar);
@@ -181,7 +180,13 @@ public class ProductsActivity extends AppCompatActivity {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmer();
+
+        // Retrieve companyId from SharedPreferences
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        String companyId = sharedPreferences.getString("companyId", null);
+
         firestore.collection("products")
+                .whereEqualTo("companyId", companyId)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     productList.clear(); // Clear the existing list before populating with new data
@@ -189,18 +194,30 @@ public class ProductsActivity extends AppCompatActivity {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
                         Product product = documentSnapshot.toObject(Product.class);
                         productList.add(product);
-                        shimmerFrameLayout.stopShimmer();
-                        shimmerFrameLayout.setVisibility(View.GONE);
                     }
 
+                    shimmerFrameLayout.stopShimmer();
+                    shimmerFrameLayout.setVisibility(View.GONE);
 
-                    productAdapter.hasObservers();
-                    productAdapter.notifyDataSetChanged();
+                    // Check if there are no products
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        // Show the "No Products" TextView and hide the RecyclerView
+                        recyclerView.setVisibility(View.GONE);
+                        noProductsTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        // Show the RecyclerView and hide the "No Products" TextView
+                        recyclerView.setVisibility(View.VISIBLE);
+                        noProductsTextView.setVisibility(View.GONE);
+
+                        // Notify the adapter of the data change
+                        productAdapter.notifyDataSetChanged();
+                    }
                 })
                 .addOnFailureListener(e -> {
                     // Handle error
                 });
     }
+
 
 
 }

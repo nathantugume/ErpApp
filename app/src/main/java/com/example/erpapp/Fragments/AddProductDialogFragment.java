@@ -1,6 +1,9 @@
 package com.example.erpapp.Fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -42,7 +45,7 @@ public class AddProductDialogFragment extends DialogFragment {
     private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private TextInputEditText productNameEditText;
     private TextInputEditText productDescEditText;
-    private TextInputEditText priceEditText, BpriceEditText;
+    private TextInputEditText priceEditText, BpriceEditText, wholeSalePriceEdt;
     private TextInputEditText quantityEditText;
     private TextInputEditText barcodeEditText;
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
@@ -53,7 +56,7 @@ public class AddProductDialogFragment extends DialogFragment {
     });
     private String selectedCategory = "";
     private Spinner categorySpinner;
-    private String productName, productDesc, price, quantity, barcode, buyingPrice;
+    private String productName, productDesc, price, quantity, barcode, buyingPrice, wholesalePrice;
 
     @NonNull
     @Override
@@ -69,6 +72,7 @@ public class AddProductDialogFragment extends DialogFragment {
         quantityEditText = view.findViewById(R.id.quantityEditText);
         barcodeEditText = view.findViewById(R.id.barcodeEditText);
         categorySpinner = view.findViewById(R.id.categorySpinner);
+        wholeSalePriceEdt = view.findViewById(R.id.wholeSaleEditText);
         BpriceEditText = view.findViewById(R.id.BpriceEditText);
 
         LoadCategoriesTask loadCategoriesTask = new LoadCategoriesTask(getContext(), categorySpinner);
@@ -97,6 +101,7 @@ public class AddProductDialogFragment extends DialogFragment {
                 quantity = quantityEditText.getText().toString();
                 barcode = barcodeEditText.getText().toString();
                 buyingPrice = BpriceEditText.getText().toString();
+                wholesalePrice = wholeSalePriceEdt.getText().toString();
 
                 // Set the item selection listener
                 categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -110,9 +115,12 @@ public class AddProductDialogFragment extends DialogFragment {
                         // Do nothing
                     }
                 });
+                // Retrieve companyId from SharedPreferences
+                SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                String companyId = sharedPreferences.getString("companyId", null);
 
 
-                if (validateInput()) {
+                if (!companyId.isEmpty() && validateInput()) {
                     // Add category to Firestore with custom category ID
                     String productId = firestore.collection("products").document().getId(); // Generate category ID
                     DocumentReference productRef = firestore.collection("products").document(productId);
@@ -129,6 +137,8 @@ public class AddProductDialogFragment extends DialogFragment {
                     productData.put("barcode", barcode);
                     productData.put("buying_price", bPrice);
                     productData.put("category", selectedCategory);
+                    productData.put("companyId",companyId);
+                    productData.put("wholeSalePrice",wholesalePrice);
 
                     productRef.set(productData)
                             .addOnSuccessListener(aVoid -> {
@@ -166,12 +176,10 @@ public class AddProductDialogFragment extends DialogFragment {
         } else if (quantity.isEmpty()) {
             quantityEditText.setError("Please enter product quantity");
             quantityEditText.requestFocus();
-        } else if (barcode.isEmpty()) {
-            barcodeEditText.setError("Please enter product barcode");
-            barcodeEditText.requestFocus();
         }
         if (selectedCategory.isEmpty()) {
             // Show an error message to the user
+            Log.d("category","name "+selectedCategory);
             Toast.makeText(getContext(), "Please select a category", Toast.LENGTH_SHORT).show();
         } else {
             return true;

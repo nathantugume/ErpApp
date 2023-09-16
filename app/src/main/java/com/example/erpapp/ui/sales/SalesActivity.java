@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -31,6 +32,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.Source;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -41,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class SalesActivity extends AppCompatActivity implements SalesProductAdapter.OnItemClickListener {
 
@@ -53,10 +57,13 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
     private FirebaseFirestore firestore; // Declare Firestore instance
     private EditText etBarcodeOrSearch;
     private SalesProductAdapter.OnItemRemovedListener onItemRemovedListener;
+    private String companyId;
+
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
 
-            etBarcodeOrSearch.setText(result.getContents());
+           // etBarcodeOrSearch.setText(result.getContents());
+            barCodeSearch(result.getContents());
 
         }
     });
@@ -68,7 +75,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         setContentView(R.layout.activity_sales);
         firestore = FirebaseFirestore.getInstance();
         MaterialToolbar toolbar;
-
         //        toolbar
         toolbar = findViewById(R.id.topAppBar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -84,14 +90,18 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         fabSaveProduct.setOnClickListener(view -> saveProduct());
         recyclerView = findViewById(R.id.recyclerView);
         totalPriceTextView = findViewById(R.id.totalPriceTextView);
+        // Retrieve companyId from SharedPreferences
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        companyId = sharedPreferences.getString("companyId", null);
 
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        productAdapter = new SalesProductAdapter(productList, this, onItemRemovedListener);
+        productAdapter = new SalesProductAdapter(productList, this, onItemRemovedListener,totalPriceTextView);
+
         productAdapter.setSalesList(salesList);
 
         recyclerView.setAdapter(productAdapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(productList, productAdapter, salesList));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(productList, productAdapter, salesList, totalPriceTextView));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
 
@@ -99,6 +109,8 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
 
     private void saveProduct() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+     
+ 
 
         // Create a new Firestore collection reference for sales
         CollectionReference salesRef = db.collection("sales");
@@ -140,7 +152,10 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
                                 product.getPrice(),
                                 quantityToSubtract, // Use the specified quantity to sell
                                 formattedDate, // Set the saleDate to the current date
-                                formattedTime  // Set the saleTime to the current time
+                                formattedTime,  // Set the saleTime to the current time
+                                product.getSaleBy(),
+                                product.getSaleType(),
+                                product.getCompanyId()
                         );
 
                         // Use the set method to save the Sale object as a document in the sales collection
@@ -217,23 +232,31 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         // You need to implement this part by querying your database or API
         // Create a Product object and add it to the sales list
         // Update the RecyclerView and total price
+        Log.d("searchTxt",""+barcodeOrSearchText);
+
+        Source source = Source.DEFAULT;
+
 
         firestore.collection("products")
-                .whereEqualTo("product_name", barcodeOrSearchText) // Adjust the field name based on your Firestore structure
-                .get()
+                .orderBy("product_name")
+                .startAt(barcodeOrSearchText)
+                .endAt(barcodeOrSearchText+"\uf8ff")
+                .get(source)
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     String txt = "";
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
                         // Assuming you have a Product class with appropriate setters/getters
 
-                        txt = documentSnapshot.getString("product_name");
-                        Product product = documentSnapshot.toObject(Product.class);
-                        addItemToSales(product);
+                        txt = documentSnapshot.getString("companyId");
+                        if (Objects.equals(companyId, txt)) {
+                            Product product = documentSnapshot.toObject(Product.class);
+                            addItemToSales(product);
 
-                        etBarcodeOrSearch.setText("");
-                        etBarcodeOrSearch.requestFocus();
+                            etBarcodeOrSearch.setText("");
+                            etBarcodeOrSearch.requestFocus();
+                        }
                     }
-                    Log.d("txt", txt);
+
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error fetching the product" + e, Toast.LENGTH_SHORT).show();
@@ -272,8 +295,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
                 p.setQuantity(p.getQuantity() + 1);
                 productExists = true;
                 Toast.makeText(this, "product already added", Toast.LENGTH_SHORT).show();
-
-
                 break; // No need to continue searching
             }
         }
@@ -297,21 +318,26 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
 
 
     public void barCodeSearch(String barcodeOrSearchText) {
+
         firestore.collection("products")
                 .whereEqualTo("barcode", barcodeOrSearchText)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    String txt = "";
+                    String id = null;
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
                         // Assuming you have a Product class with appropriate setters/getters
 
-                        txt = documentSnapshot.getString("product_name");
-                        Product product = documentSnapshot.toObject(Product.class);
-                        addItemToSales(product);
-                        etBarcodeOrSearch.setText("");
-                        etBarcodeOrSearch.requestFocus();
-                    }
-                    Log.d("txt", txt);
+                         id = documentSnapshot.getString("companyId");
+                         if (companyId.equals(id)) {
+
+                             Product product = documentSnapshot.toObject(Product.class);
+                             addItemToSales(product);
+                             etBarcodeOrSearch.setText("");
+                             etBarcodeOrSearch.requestFocus();
+                         }
+                        }
+
+
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error fetching the product" + e, Toast.LENGTH_SHORT).show();
@@ -343,6 +369,15 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         updateTotalPrice();
     }
 
+    public SalesProductAdapter.OnItemRemovedListener getOnItemRemovedListener() {
+
+        calculateTotalPrice();
+        return onItemRemovedListener;
+    }
+
+    public void setOnItemRemovedListener(SalesProductAdapter.OnItemRemovedListener onItemRemovedListener) {
+        this.onItemRemovedListener = onItemRemovedListener;
+    }
 
     @Override
     public int getQuantity(Product product) {
@@ -353,6 +388,13 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
     public int getPrice(Product product) {
         return product.getPrice();
     }
+
+    @Override
+    public void onPriceChange(Product product, double newPrice) {
+        updateTotalPrice();
+    }
+
+
 
 
 }

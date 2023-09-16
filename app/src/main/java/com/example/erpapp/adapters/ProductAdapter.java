@@ -60,6 +60,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.buying_price.setText(String.valueOf(product.getBuying_price()));
         holder.price.setText(String.valueOf(product.getPrice()));
         holder.description.setText(product.getProduct_desc());
+        holder.wholeSale.setText(String.valueOf(product.getWholeSalePrice()));
+
         holder.menuIcon.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(context, holder.menuIcon);
             popupMenu.inflate(R.menu.card_menu);
@@ -120,6 +122,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         EditText quantityEditText = dialogView.findViewById(R.id.quantityEditText);
         EditText barcodeEditText = dialogView.findViewById(R.id.barcodeEditText);
         EditText BpriceEditText = dialogView.findViewById(R.id.BpriceEditText);
+
 
 
         Spinner categorySpinner = dialogView.findViewById(R.id.categorySpinner);
@@ -194,7 +197,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView productNameTextView;
-        TextView barcodeTextView, quantity, price, buying_price, category, description;
+        TextView barcodeTextView, quantity, price, buying_price, category, description,wholeSale;
         ImageView menuIcon;
 
         ViewHolder(View itemView) {
@@ -205,6 +208,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             price = itemView.findViewById(R.id.price);
             buying_price = itemView.findViewById(R.id.buying_price);
             category = itemView.findViewById(R.id.category);
+            wholeSale = itemView.findViewById(R.id.wholesale_price);
             description = itemView.findViewById(R.id.description);
             menuIcon = itemView.findViewById(R.id.menuIcon);
         }

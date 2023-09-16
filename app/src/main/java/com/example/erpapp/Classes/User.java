@@ -6,6 +6,7 @@ public class User {
     private String companyName;
     private  String password;
     private String role; // New field for user role
+    private String companyId;
 
     private String fullName;
 
@@ -67,6 +68,14 @@ public class User {
 
     public String getFullName() {
         return fullName;
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
     }
 
     public void setFullName(String fullName) {

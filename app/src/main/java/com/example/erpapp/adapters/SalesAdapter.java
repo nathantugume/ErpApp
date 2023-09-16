@@ -67,5 +67,7 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.SalesViewHol
             saleAmountTextView = itemView.findViewById(R.id.saleAmountTextView);
             quantityTextView = itemView.findViewById(R.id.quantityTextView);
         }
+
+
     }
 }

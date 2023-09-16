@@ -1,17 +1,13 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-
-
-    <LinearLayout
-        android:id="@+id/sales_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/namesLayout"
+            android:orientation="vertical">
             <TextView
                 android:id="@+id/productNameTextView"
                 android:layout_width="wrap_content"
@@ -19,24 +15,59 @@
                 android:layout_weight="2"
                 android:text="name"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/productPriceTextView"
+                android:textStyle="bold" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="0.0"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16dp"
+                    android:text="Price: "/>
+
+                <!-- Editable EditText for retail price -->
+                <EditText
+                    android:id="@+id/productPriceEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/price"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:inputType="numberDecimal"
+                    />
+            </LinearLayout>
 
 
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <Button
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/namesLayout"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quantity: "
+            android:gravity="center_vertical"
+            />
+        <TextView
             android:id="@+id/decrementButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
             android:textSize="20sp"
-            android:text="-"/>
+            android:text="-"
+            android:textColor="@android:color/white"
+            android:background="@drawable/custom_button_background" />
 
 
         <TextView
@@ -49,17 +80,57 @@
             android:paddingEnd="8dp"
             android:gravity="center"/>
 
-        <Button
+
+        <TextView
             android:id="@+id/incrementButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
             android:textSize="20sp"
             android:text="+"
-            />
-
-
+            android:textColor="@android:color/white"
+            android:background="@drawable/custom_button_background" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        >
 
+        <!-- Spinner for sale type -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sale Type"
+            android:textStyle="bold"
+            />
+
+        <Spinner
+            android:id="@+id/saleTypeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="8dp"
+            android:entries="@array/sale_types" />
+        <!-- Spinner for sale type -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Credit/Cash"
+            android:textStyle="bold|italic"
+            />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/saleCreditSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Credit" />
+    </LinearLayout>
 
 </RelativeLayout>

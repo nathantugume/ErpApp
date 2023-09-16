@@ -18,4 +18,9 @@
         <item>Monthly</item>
         <item>Yearly</item>
     </string-array>
+
+    <string-array name="sale_types">
+        <item>Retail</item>
+        <item>Wholesale</item>
+    </string-array>
 </resources>

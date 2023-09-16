@@ -1,5 +1,8 @@
 package com.example.erpapp.Classes;
 
+import android.util.Log;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,17 +10,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.erpapp.adapters.SalesProductAdapter;
 
 import java.util.List;
+import java.util.Locale;
 
 public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
     private final List<Product> productList;
     private final SalesProductAdapter productAdapter;
     private final List<Product> salesList;
+    TextView totalPriceTextView;
 
-    public SwipeToDeleteCallback(List<Product> productList, SalesProductAdapter productAdapter, List<Product> salesList) {
+    public SwipeToDeleteCallback(List<Product> productList, SalesProductAdapter productAdapter, List<Product> salesList, TextView totalPriceTextView) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.productList = productList;
         this.productAdapter = productAdapter;
         this.salesList = salesList;
+        this.totalPriceTextView = totalPriceTextView;
     }
 
     @Override
@@ -50,9 +56,24 @@ public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
             }
 
         }
+        // Recalculate the total price
+        double totalPrice = calculateTotalPrice();
+
+// Update the total price TextView
+        if (totalPriceTextView != null) {
+            totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: %.2f", totalPrice));
+        }
       productAdapter.notifyDataSetChanged();
         productAdapter.updateData(salesList);
 
 
+    }
+
+    private double calculateTotalPrice() {
+        double total = 0;
+        for (Product product : salesList) {
+            total += product.getPrice() * product.getQuantity(); // Calculate total price for each item
+        }
+        return total;
     }
 }

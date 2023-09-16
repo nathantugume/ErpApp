@@ -1,6 +1,9 @@
 package com.example.erpapp.Fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +28,7 @@ import java.util.Objects;
 public class AddCategoryDialogFragment extends DialogFragment {
 
     private TextInputEditText categoryNameEditText,categoryDesc;
+
 
     @NonNull
     @Override
@@ -52,6 +56,9 @@ public class AddCategoryDialogFragment extends DialogFragment {
             positiveButton.setOnClickListener(v -> {
                 String categoryName = Objects.requireNonNull(categoryNameEditText.getText()).toString();
                 String desc = Objects.requireNonNull(categoryDesc.getText()).toString();
+                // Retrieve companyId from SharedPreferences
+                SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                String companyId = sharedPreferences.getString("companyId", null);
 
                 if (desc.isEmpty()){
                     categoryDesc.setError("please enter category details");
@@ -61,13 +68,17 @@ public class AddCategoryDialogFragment extends DialogFragment {
                     categoryNameEditText.setError("please enter category name");
                     categoryNameEditText.setFocusable(true);
                     categoryNameEditText.requestFocus();
-                }else {
+                } else if (companyId.isEmpty()) {
+                    Toast.makeText(getContext(), "Company Id is empty please contact your Administrator to fix this", Toast.LENGTH_LONG).show();
+
+                } else {
                     // Add category to Firestore with custom category ID
                     String categoryId = firestore.collection("categories").document().getId(); // Generate category ID
                     DocumentReference categoryRef = firestore.collection("categories").document(categoryId);
 
                     Map<String, Object> categoryData = new HashMap<>();
                     categoryData.put("categoryId", categoryId); // Save category ID
+                    categoryData.put("companyId", companyId);
                     categoryData.put("name", categoryName);
                     categoryData.put("description",desc);
 
