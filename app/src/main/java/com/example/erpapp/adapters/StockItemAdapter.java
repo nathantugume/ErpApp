@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,11 @@ public class StockItemAdapter extends RecyclerView.Adapter<StockItemAdapter.Stoc
     @Override
     public StockItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_stock, parent, false);
+        if (stockItemList.isEmpty()) {
+            // The list is empty
+            Log.d("StockAdapter", "The list is empty in onCreateViewHolder");
+        }
+
         return new StockItemViewHolder(view);
     }
 
@@ -50,6 +56,14 @@ public class StockItemAdapter extends RecyclerView.Adapter<StockItemAdapter.Stoc
         StockItem stockItem = stockItemList.get(position);
 
         holder.bind(stockItem);
+        if (stockItemList.isEmpty()) {
+            // The list is empty
+            Log.d("StockAdapter", "The list is empty");
+        } else {
+            // The list contains items
+            Log.d("StockAdapter", "The list contains items");
+        }
+
 
         // Quantity EditText listener
         holder.quantityEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -120,6 +134,7 @@ public class StockItemAdapter extends RecyclerView.Adapter<StockItemAdapter.Stoc
             productNameTextView.setText(stockItem.getProductName());
             quantityEditText.setText(String.valueOf(stockItem.getQuantity()));
             priceEditText.setText(String.valueOf(stockItem.getPrice()));
+            Log.d("StockAdapter","item "+stockItem.getProductName());
         }
     }
 

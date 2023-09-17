@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.example.erpapp.Admin.AdminDashboardActivity;
@@ -28,6 +30,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,8 +98,15 @@ public class AddExpensesActivity extends AppCompatActivity {
         // Query the expenses collection
         shimmerFrameLayout.setVisibility(View.VISIBLE);
         shimmerFrameLayout.startShimmer();
-        expensesCollection.get().addOnSuccessListener(queryDocumentSnapshots -> {
+        // Retrieve companyId from SharedPreferences
+        SharedPreferences sharedPreferences = this.getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        String companyId = sharedPreferences.getString("companyId", null);
+        Source source = Source.DEFAULT;
+        expensesCollection.whereEqualTo("companyId",companyId).
+                get(source).
+                addOnSuccessListener(queryDocumentSnapshots -> {
             for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
                 // Get data from the document
                 String expenseId = documentSnapshot.getString("expenseId");
                 String paymentDesc = documentSnapshot.getString("payment_desc");
@@ -115,6 +125,11 @@ public class AddExpensesActivity extends AppCompatActivity {
 
                 // Now you can use the expenseItem object as needed
                 expenseItemList.add(expenseItem);
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+            }
+            if (expenseItemList.isEmpty()){
+                Toast.makeText(this, "No expenses at the moment", Toast.LENGTH_LONG).show();
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
             }

@@ -1,6 +1,7 @@
 package com.example.erpapp.ui.stock;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -43,27 +45,33 @@ import java.util.Locale;
 
 public class AddStockActivity extends AppCompatActivity implements StockItem.OnQuantityChangeListener,OnPriceChangeListener {
 
+    private final Source source = Source.DEFAULT;
+    // Retrieve companyId from SharedPreferences
+
     private RecyclerView recyclerView;
     private StockItemAdapter stockItemAdapter;
     private List<StockItem> stockItemList = new ArrayList<>();
     private EditText etBarcodeOrSearch;
-
-    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
-        if (result.getContents() != null) {
-            etBarcodeOrSearch.setText(result.getContents());
-        }
-    });
     private TextView totalPriceEdt;
     private double totalPrice = 0.0;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+//            etBarcodeOrSearch.setText(result.getContents());
+            barCodeSearch(result.getContents());
+        }
+    });
     private CollectionReference productsCollection = firestore.collection("products");
     private CollectionReference purchasesCollection = firestore.collection("purchases");
     private Product product;
+    private String companyId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_stock);
+        // Retrieve companyId from SharedPreferences
 
         MaterialToolbar toolbar;
 
@@ -75,7 +83,8 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
                 onBackPressed();
             }
         });
-
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        companyId = sharedPreferences.getString("companyId", null);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         stockItemAdapter = new StockItemAdapter(stockItemList, this, this::onItemDeleted, this::onPriceChange);
@@ -163,6 +172,7 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
         return str.matches("\\d+");
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchProducts(String barcodeOrSearchText) {
         // Fetch product details based on barcode or search text
         // You need to implement this part by querying your database or API
@@ -170,26 +180,39 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
         // Update the RecyclerView and total price
 
         firestore.collection("products")
-                .whereEqualTo("product_name", barcodeOrSearchText) // Adjust the field name based on your Firestore structure
-                .get()
+                .orderBy("product_name")
+                .startAt(barcodeOrSearchText)
+                .endAt(barcodeOrSearchText+"\uf8ff")
+                .get(source)
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
                         Product product = documentSnapshot.toObject(Product.class);
-                        if (product != null) {
-                            StockItem stockItem = new StockItem(product.getProduct_name(), 1, product.getBuying_price());
+
+                        if (companyId.equals(product.getCompanyId())) {
+                            StockItem stockItem = new StockItem();
+                            stockItem.setProductName(product.getProduct_name());
+                            stockItem.setQuantity(1);
+                            stockItem.setPrice(product.getBuying_price());
+                            stockItemList.add(stockItem);
                             addItemToStock(stockItem);
+                            stockItemAdapter.notifyDataSetChanged();
+
+                            etBarcodeOrSearch.setText("");
+                            etBarcodeOrSearch.requestFocus();
                         }
-                        etBarcodeOrSearch.setText("");
-                        etBarcodeOrSearch.requestFocus();
+
+
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error fetching the product" + e, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error fetching the product" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     // Handle error
                 });
     }
 
     public void barCodeSearch(String barcodeOrSearchText) {
+
         firestore.collection("products")
                 .whereEqualTo("barcode", barcodeOrSearchText)
                 .get()
@@ -200,12 +223,15 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
                             StockItem stockItem = new StockItem(product.getProduct_name(), 1, product.getBuying_price());
                             addItemToStock(stockItem);
                         }
+
                         etBarcodeOrSearch.setText("");
                         etBarcodeOrSearch.requestFocus();
+                        Log.d("listSum","sum"+stockItemList.size());
                     }
+
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error fetching the product" + e, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error fetching the product" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     // Handle error
                 });
     }
@@ -214,7 +240,6 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
         // Add the StockItem to the list and update the RecyclerView
         // Create a SimpleDateFormat object with the desired date format
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-
         // Get the current date in the desired format
         String formattedDate = dateFormat.format(new Date());
 
@@ -224,8 +249,8 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
             parsedDate = dateFormat.parse(formattedDate);
         } catch (ParseException e) {
             // Handle the parse exception, if needed
+            Toast.makeText(this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
         // Set the StockItem's purchase date using the parsed Date
         stockItem.setPurchaseDate(parsedDate);
 
@@ -267,12 +292,11 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
             String productName = item.getProductName();
             int newPrice = (int) item.getPrice();
 
-
             // 1. Update the product quantity in the "products" collection
             updateProductQuantityInDatabase(productName, newQuantity,newPrice);
 
             // 2. Add a purchase record to the "purchases" collection
-            addPurchaseRecord(productName, newQuantity, item.getPurchaseDate(),newQuantity,newPrice);
+            addPurchaseRecord(productName, newQuantity, item.getPurchaseDate(),newPrice);
         }
 
         // Clear the stockItemList (if needed)
@@ -291,7 +315,7 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
         // Update the product quantity in the "products" collection
         productsCollection
                 .whereEqualTo("product_name", productName)
-                .get()
+                .get(source)
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
                         String documentId = documentSnapshot.getId();
@@ -314,16 +338,21 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
                 });
     }
 
-    private void addPurchaseRecord(String productName, int quantity, Date purchaseDate, int newQuantity, int newPrice) {
+    private void addPurchaseRecord(String productName, int quantity, Date purchaseDate,  int newPrice) {
         // Create a new purchase record and add it to the "purchases" collection
-        Purchase purchase = new Purchase(productName, quantity, purchaseDate,newPrice);
+        Purchase purchase = new Purchase();
+        purchase.setProductName(productName);
+        purchase.setQuantity(quantity);
+        purchase.setPurchaseDate(purchaseDate);
+        purchase.setPrice(newPrice);
+        purchase.setCompanyId(companyId);
 
         purchasesCollection.add(purchase)
                 .addOnSuccessListener(documentReference -> {
                     // Handle success if needed
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error adding purchase record: " + e, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error adding purchase record: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -382,7 +411,7 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
             });
         } catch (IndexOutOfBoundsException e) {
             // Handle the exception (e.g., log or display an error message)
-            Log.d("Error","sorry"+e);
+            Log.d("Error","sorry"+e.getMessage());
         }
     }
 

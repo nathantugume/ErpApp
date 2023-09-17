@@ -1,6 +1,9 @@
 package com.example.erpapp.Fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
@@ -116,6 +119,9 @@ public class AddAccountsDialogFragment extends DialogFragment {
                     transaction_name.requestFocus();
                 } else {
 
+                    // Retrieve companyId from SharedPreferences
+                    SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                    String companyId = sharedPreferences.getString("companyId", null);
                     Log.d("selected item","item"+selectedTransactionType);
                     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
                     String accountId = firestore.collection("Accounts").document().getId(); // Generate Unique Id
@@ -124,6 +130,7 @@ public class AddAccountsDialogFragment extends DialogFragment {
                     accountsData.put("accountsId", accountId);
                     accountsData.put("transaction_type", selectedTransactionType); // Changed to transaction[0]
                     accountsData.put("account_name", transactionName);
+                    accountsData.put("companyId",companyId);
 
                     accountsRef.set(accountsData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -133,7 +140,7 @@ public class AddAccountsDialogFragment extends DialogFragment {
                                     alertDialog.dismiss();
                                 }
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(getContext(), "Sorry, transaction failed" + e, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Sorry, transaction failed" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 alertDialog.dismiss();
                             });
                 }

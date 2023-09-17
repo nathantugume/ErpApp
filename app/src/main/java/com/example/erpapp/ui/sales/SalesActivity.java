@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,6 +59,7 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
     private EditText etBarcodeOrSearch;
     private SalesProductAdapter.OnItemRemovedListener onItemRemovedListener;
     private String companyId;
+    private Source source = Source.DEFAULT;
 
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
@@ -109,9 +111,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
 
     private void saveProduct() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-     
- 
-
         // Create a new Firestore collection reference for sales
         CollectionReference salesRef = db.collection("sales");
         CollectionReference productsRef = db.collection("products");
@@ -127,7 +126,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         // Iterate through the salesList and save each product as a document in the sales collection
         for (Product product : salesList) {
             int quantityToSubtract = product.getQuantity(); // Specify the quantity to subtract
-
             // Define the Firestore document reference for the product
             DocumentReference productRef = productsRef.document(product.getProductId());
 
@@ -145,18 +143,20 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
                         DocumentReference saleDocRef = salesRef.document();
 
                         // Create a Sale object representing the sale, including the product details, date, and time
-                        Sale sale = new Sale(
-                                saleDocRef.getId(),   // Use the document ID as the sale ID
-                                product.getProductId(),
-                                product.getProduct_name(),
-                                product.getPrice(),
-                                quantityToSubtract, // Use the specified quantity to sell
-                                formattedDate, // Set the saleDate to the current date
-                                formattedTime,  // Set the saleTime to the current time
-                                product.getSaleBy(),
-                                product.getSaleType(),
-                                product.getCompanyId()
-                        );
+
+                        Sale sale = new Sale();
+                        sale.setSaleId(saleDocRef.getId());
+                        sale.setProductId(product.getProductId());
+                        sale.setProductName(product.getProduct_name());
+                        sale.setProductPrice(product.getPrice());
+                        sale.setQuantity(quantityToSubtract);
+                        sale.setSaleTime(formattedTime);
+                        sale.setSaleDate(formattedDate);
+                        sale.setSaleBy(product.getSaleBy());
+                        sale.setSaleType(product.getSaleType());
+                        sale.setCompanyId(product.getCompanyId());
+
+                        Log.d("saledata","data"+product.getProduct_name());
 
                         // Use the set method to save the Sale object as a document in the sales collection
                         saleDocRef.set(sale)
@@ -232,10 +232,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         // You need to implement this part by querying your database or API
         // Create a Product object and add it to the sales list
         // Update the RecyclerView and total price
-        Log.d("searchTxt",""+barcodeOrSearchText);
-
-        Source source = Source.DEFAULT;
-
 
         firestore.collection("products")
                 .orderBy("product_name")
@@ -266,7 +262,7 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
 
     }
 
-
+    @SuppressLint("NotifyDataSetChanged")
     private void updateSalesList() {
         productAdapter.updateData(salesList);
         productAdapter.notifyDataSetChanged(); // Notify the adapter that data has changed
@@ -280,7 +276,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         for (Product product : salesList) {
             total += product.getPrice() * product.getQuantity(); // Calculate total price for each item
 
-            Log.d("toto", "totalqty" + total);
         }
         return total;
     }
@@ -326,7 +321,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
                     String id = null;
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
                         // Assuming you have a Product class with appropriate setters/getters
-
                          id = documentSnapshot.getString("companyId");
                          if (companyId.equals(id)) {
 
@@ -336,8 +330,6 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
                              etBarcodeOrSearch.requestFocus();
                          }
                         }
-
-
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error fetching the product" + e, Toast.LENGTH_SHORT).show();
@@ -350,14 +342,10 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         Toast.makeText(this, "Clicked on: " + product.getProduct_name(), Toast.LENGTH_SHORT).show();
 
     }
-
-
     @Override
     public void onQuantityChange(Product product, int newQuantity) {
         // Handle quantity change here
         // For example, you can update the total price or perform other operations
-
-
         // You can also update the product's quantity in the salesList
         // Find the product in the salesList and update its quantity
         for (Product p : salesList) {

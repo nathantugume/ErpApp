@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.erpapp.Admin.AdminDashboardActivity;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -46,11 +48,15 @@ public class StockReportActivity extends AppCompatActivity {
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private List<StockItem> stockItemList = new ArrayList<>();
     private StockReportAdapter stockReportAdapter;
-
+    private Source source = Source.DEFAULT;
+    private String companyId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_report);
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        companyId = sharedPreferences.getString("companyId", null);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener(){
@@ -97,8 +103,8 @@ public class StockReportActivity extends AppCompatActivity {
 
         // Fetch stock data from Firestore
         CollectionReference stockRef = firestore.collection("products");
-        stockRef
-                .get()
+        stockRef.whereEqualTo("companyId",companyId)
+                .get(source)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                     @Override

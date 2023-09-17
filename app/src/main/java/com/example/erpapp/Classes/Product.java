@@ -23,8 +23,8 @@ public class Product {
         // Default constructor required for Firebase Firestore
     }
 
-    public Product(String productId, String product_name, String product_desc, int price, int quantity, String barcode,
-                   int buying_price, String category,int wholeSalePrice, String companyId) {
+    public Product(String productId, String product_name, String product_desc, int price, int quantity,
+                   String barcode, int buying_price, String category,int wholeSalePrice, String companyId) {
         this.productId = productId;
         this.product_name = product_name;
         this.product_desc = product_desc;

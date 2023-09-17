@@ -30,6 +30,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -48,6 +49,7 @@ public class AddProductDialogFragment extends DialogFragment {
     private TextInputEditText priceEditText, BpriceEditText, wholeSalePriceEdt;
     private TextInputEditText quantityEditText;
     private TextInputEditText barcodeEditText;
+    private Source source = Source.DEFAULT;
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
 
@@ -121,35 +123,50 @@ public class AddProductDialogFragment extends DialogFragment {
 
 
                 if (!companyId.isEmpty() && validateInput()) {
-                    // Add category to Firestore with custom category ID
-                    String productId = firestore.collection("products").document().getId(); // Generate category ID
-                    DocumentReference productRef = firestore.collection("products").document(productId);
+                    // Check if a product with the same name and companyId exists
+                    firestore.collection("products")
+                            .whereEqualTo("product_name", productName)
+                            .whereEqualTo("companyId", companyId)
+                            .get(source)
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                if (queryDocumentSnapshots.isEmpty()) {
+                                    // No existing product with the same name and companyId found, proceed to add
+                                    String productId = firestore.collection("products").document().getId(); // Generate product ID
+                                    DocumentReference productRef = firestore.collection("products").document(productId);
 
-                    int pricedata = Integer.parseInt(price);
-                    int qty = Integer.parseInt(quantity);
-                    int bPrice = Integer.parseInt(buyingPrice);
-                    Map<String, Object> productData = new HashMap<>();
-                    productData.put("productId", productId); // Save product ID
-                    productData.put("product_name", productName);
-                    productData.put("product_desc", productDesc);
-                    productData.put("price", pricedata);
-                    productData.put("quantity", qty);
-                    productData.put("barcode", barcode);
-                    productData.put("buying_price", bPrice);
-                    productData.put("category", selectedCategory);
-                    productData.put("companyId",companyId);
-                    productData.put("wholeSalePrice",wholesalePrice);
+                                    int pricedata = Integer.parseInt(price);
+                                    int qty = Integer.parseInt(quantity);
+                                    int bPrice = Integer.parseInt(buyingPrice);
+                                    Map<String, Object> productData = new HashMap<>();
+                                    productData.put("productId", productId); // Save product ID
+                                    productData.put("product_name", productName);
+                                    productData.put("product_desc", productDesc);
+                                    productData.put("price", pricedata);
+                                    productData.put("quantity", qty);
+                                    productData.put("barcode", barcode);
+                                    productData.put("buying_price", bPrice);
+                                    productData.put("category", selectedCategory);
+                                    productData.put("companyId", companyId);
+                                    productData.put("wholeSalePrice", wholesalePrice);
 
-                    productRef.set(productData)
-                            .addOnSuccessListener(aVoid -> {
-                                // Success
-                                Toast.makeText(getContext(), "Product added successfully", Toast.LENGTH_SHORT).show();
-                                alertDialog.dismiss();
+                                    productRef.set(productData)
+                                            .addOnSuccessListener(aVoid -> {
+                                                // Success
+                                                Toast.makeText(getContext(), "Product added successfully", Toast.LENGTH_SHORT).show();
+                                                alertDialog.dismiss();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                // Error handling
+                                            });
+                                } else {
+                                    // Product with the same name and companyId already exists
+                                    Toast.makeText(getContext(), "Product with the same name already exists", Toast.LENGTH_SHORT).show();
+                                }
                             })
                             .addOnFailureListener(e -> {
                                 // Error handling
+                                Toast.makeText(getContext(), "error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                             });
-
                 }
 
             });

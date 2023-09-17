@@ -29,6 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -45,6 +46,7 @@ public class ProductsActivity extends AppCompatActivity {
 
     private  ShimmerFrameLayout shimmerFrameLayout;
     private TextView noProductsTextView;
+    private Source source = Source.DEFAULT;
 
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
@@ -187,7 +189,7 @@ public class ProductsActivity extends AppCompatActivity {
 
         firestore.collection("products")
                 .whereEqualTo("companyId", companyId)
-                .get()
+                .get(source)
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     productList.clear(); // Clear the existing list before populating with new data
 

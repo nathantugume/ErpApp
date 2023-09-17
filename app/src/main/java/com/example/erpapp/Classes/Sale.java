@@ -11,10 +11,13 @@ public class Sale {
     private String saleDate;
     private String saleTime;
     private String companyId;
+    private String saleBy;
+    private String saleType;
+
 
     public Sale(){}
 
-    public Sale(String saleId, String productId, String productName, double productPrice, int quantity, String saleDate, String saleTime) {
+    public Sale(String saleId, String productId, String productName, double productPrice, int quantity, String saleDate, String saleTime,String saleBy, String saleType, String companyId) {
         this.saleId = saleId;
         this.productId = productId;
         this.productName = productName;
@@ -22,10 +25,12 @@ public class Sale {
         this.quantity = quantity;
         this.saleDate = saleDate;
         this.saleTime = saleTime;
+        this.saleBy = saleBy;
+        this.saleType = saleType;
+        this.companyId = companyId;
     }
 
-    public Sale(String id, String productId, String product_name, int price, int quantityToSubtract, String formattedDate, String formattedTime, String saleBy, String saleType, String CompanyId) {
-    }
+
 
     public String getCompanyId() {
         return companyId;
@@ -91,5 +96,19 @@ public class Sale {
         this.saleTime = saleTime;
     }
 
+    public String getSaleBy() {
+        return saleBy;
+    }
 
+    public void setSaleBy(String saleBy) {
+        this.saleBy = saleBy;
+    }
+
+    public String getSaleType() {
+        return saleType;
+    }
+
+    public void setSaleType(String saleType) {
+        this.saleType = saleType;
+    }
 }

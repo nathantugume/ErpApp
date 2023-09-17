@@ -1,7 +1,10 @@
 package com.example.erpapp.Fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,8 @@ import com.example.erpapp.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.Source;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,6 +50,17 @@ public class AddExpenseFragment extends DialogFragment {
         View view = LayoutInflater.from(requireContext())
                 .inflate(R.layout.fragment_add_expense, null);
 
+        firestore.setFirestoreSettings(new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .build());
+
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
+                .build();
+        firestore.setFirestoreSettings(settings);
+
+
+
         paidToEditText = view.findViewById(R.id.paidToEditText);
         paymentDescEditText = view.findViewById(R.id.paymentDescEditText);
         amountEditText = view.findViewById(R.id.amountEditText);
@@ -55,17 +71,17 @@ public class AddExpenseFragment extends DialogFragment {
         expenseAccountSpinner = view.findViewById(R.id.expenseAccountSpinner);
         // payment Type Spinner
         // Create an ArrayAdapter using the custom layout for the Spinner items
-        String[] payment_types= {"Cash","Credit card","Cheque","Mobile money"};
-        ArrayAdapter<CharSequence> payment  = new ArrayAdapter<CharSequence>(getContext(),
+        String[] payment_types = {"Cash", "Credit card", "Cheque", "Mobile money"};
+        ArrayAdapter<CharSequence> payment = new ArrayAdapter<CharSequence>(getContext(),
                 androidx.appcompat.R.layout.support_simple_spinner_dropdown_item
-                ,payment_types);
+                , payment_types);
         payment.setDropDownViewResource(com.google.android.material.R.layout.support_simple_spinner_dropdown_item);
         paymentTypeSpinner.setAdapter(payment);
 
         LoadExpensesTask loadExpensesTask = new LoadExpensesTask(getContext(), expenseAccountSpinner);
         loadExpensesTask.execute();
 
-            // Getting spinner selected item
+        // Getting spinner selected item
         expenseAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -104,7 +120,7 @@ public class AddExpenseFragment extends DialogFragment {
                 paymentDesc = paymentDescEditText.getText().toString();
                 amount = amountEditText.getText().toString();
                 reference = referenceNoEditText.getText().toString();
-                    //  set accounts spinner
+                //  set accounts spinner
 
 
                 // Get the current date and time
@@ -114,30 +130,45 @@ public class AddExpenseFragment extends DialogFragment {
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
                 String formattedDate = dateFormat.format(currentDate);
                 String formattedTime = timeFormat.format(currentDate);
+                // Retrieve companyId from SharedPreferences
+                SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                String companyId = sharedPreferences.getString("companyId", null);
+
 
                 if (validateInput()) {
-                    String expenseId = firestore.collection("expenses").document().getId();
+                    Source source = Source.DEFAULT;
+
+                    String expenseId = firestore.collection("expenses")
+                            .document().getId();
                     DocumentReference expenseRef = firestore.collection("expenses").document(expenseId);
 
                     Double amount_paid = Double.valueOf(amount);
                     Map<String, Object> expenseData = new HashMap<>();
-                    expenseData.put("paid_to",paidTo);
+                    expenseData.put("paid_to", paidTo);
                     expenseData.put("expenseId", expenseId);
                     expenseData.put("payment_desc", paymentDesc);
                     expenseData.put("payment_type", selectedPaymentMethod);
                     expenseData.put("amount", amount_paid);
                     expenseData.put("reference", reference);
                     expenseData.put("expense_account", selectedAccount);
-                    expenseData.put("date",formattedDate);
-                    expenseData.put("time",formattedTime);
+                    expenseData.put("date", formattedDate);
+                    expenseData.put("time", formattedTime);
+                    expenseData.put("companyId", companyId);
 
-                    expenseRef.set(expenseData)
+                    expenseRef
+                            .set(expenseData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     Toast.makeText(getContext(), "Expense Added Successfully", Toast.LENGTH_SHORT).show();
                                     alertDialog.dismiss();
                                 }
+                            }).addOnFailureListener(e -> {
+                                // Handle the failure to save data
+                                    // No network connectivity, data will be saved offline
+                                    Toast.makeText(getContext(), "Expense will be saved offline"+e.getMessage(), Toast.LENGTH_LONG).show();
+                                    alertDialog.dismiss();
+
                             });
                 }
 

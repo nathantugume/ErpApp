@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -52,11 +53,15 @@ public class CashFlowReportActivity extends AppCompatActivity {
     private TextView netCashFlow;
     private TextView totalInFlow;
     private TextView totalOutFlow;
+   private String companyId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cash_flow_report);
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+         companyId = sharedPreferences.getString("companyId", null);
 
         MaterialToolbar toolbar;
 
@@ -203,11 +208,14 @@ public class CashFlowReportActivity extends AppCompatActivity {
                         // Fetch and process expense data
                         List<CashFlowItem> cashFlowData = new ArrayList<>();
                         for (QueryDocumentSnapshot document : expenseSnapshot) {
-                            String paymentDesc = document.getString("payment_desc");
-                            double amount = document.getDouble("amount");
-                            String date = document.getString("date");
+                            if (companyId.equals(document.getString("companyId"))){
+                                String paymentDesc = document.getString("payment_desc");
+                                double amount = document.getDouble("amount");
+                                String date = document.getString("date");
 
-                            cashFlowData.add(new CashFlowItem( date,-amount,paymentDesc));
+                                cashFlowData.add(new CashFlowItem( date,-amount,paymentDesc));
+                            }
+
 
                         }
 
@@ -222,11 +230,15 @@ public class CashFlowReportActivity extends AppCompatActivity {
                                     public void onSuccess(QuerySnapshot salesSnapshot) {
                                         // Fetch and process sales data
                                         for (QueryDocumentSnapshot document : salesSnapshot) {
-                                            String productName = document.getString("productName");
-                                            Long amount = document.getLong("productPrice");
-                                            String date = document.getString("saleDate");
-                                            cashFlowData.add(new CashFlowItem(date,amount,productName ));
-                                            Log.d("saleAmount","amount"+amount);
+
+                                            if (companyId.equals(document.getString("companyId"))){
+                                                String productName = document.getString("productName");
+                                                Long amount = document.getLong("productPrice");
+                                                String date = document.getString("saleDate");
+                                                cashFlowData.add(new CashFlowItem(date,amount,productName ));
+                                                Log.d("saleAmount","amount"+amount);
+                                            }
+
                                         }
 
                                         // Calculate the total cash flow

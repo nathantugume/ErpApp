@@ -1,13 +1,9 @@
 package com.example.erpapp.ui.reports;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -15,7 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.erpapp.Admin.AdminDashboardActivity;
 import com.example.erpapp.R;
@@ -29,6 +27,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -38,6 +37,9 @@ import java.util.Locale;
 public class BalanceSheetActivity extends AppCompatActivity {
 
 
+    private final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault()); // You can specify the desired locale
+    // Retrieve companyId from SharedPreferences
+
     private TextView totalAssetsTextView;
     private TextView totalLiabilitiesTextView;
     private TextView equityTextView;
@@ -46,13 +48,16 @@ public class BalanceSheetActivity extends AppCompatActivity {
     private Calendar selectedMonthYearCalendar = Calendar.getInstance();
     private TextView balanceSheetHeading;
     private double totalAssets;
-    private final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault()); // You can specify the desired locale
-
+    private Source source = Source.DEFAULT;
+    private String companyId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance_sheet);
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        companyId = sharedPreferences.getString("companyId", null);
 
         // Initialize UI components
         MaterialToolbar toolbar;
@@ -119,13 +124,14 @@ public class BalanceSheetActivity extends AppCompatActivity {
 
 
     private void fetchAndDisplayAssetsData() {
-        firestore.collection("products")
-                .get()
+
+        firestore.collection("products").whereEqualTo("companyId",companyId)
+                .get(source)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onSuccess(QuerySnapshot productSnapshot) {
-                        double totalAssets = 0.0;
+                         totalAssets = 0.0;
 
                         for (QueryDocumentSnapshot document : productSnapshot) {
                             double price = document.getDouble("price");
@@ -158,7 +164,8 @@ public class BalanceSheetActivity extends AppCompatActivity {
 
     private void fetchAndDisplayAssetsData(CollectionReference productsRef, String endDate) {
         productsRef
-                .get()
+                .whereEqualTo("companyId",companyId)
+                .get(source)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @SuppressLint("SetTextI18n")
                     @Override
@@ -181,7 +188,7 @@ public class BalanceSheetActivity extends AppCompatActivity {
     private void fetchAndDisplayEquityData(CollectionReference expensesRef, String endDate) {
         expensesRef
                 .whereLessThanOrEqualTo("date", endDate)
-                .get()
+                .get(source)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @SuppressLint("SetTextI18n")
                     @Override
@@ -189,8 +196,11 @@ public class BalanceSheetActivity extends AppCompatActivity {
                         double totalExpenses = 0.0;
 
                         for (QueryDocumentSnapshot document : expenseSnapshot) {
-                            double amount = document.getDouble("amount");
-                            totalExpenses += amount;
+                            if (companyId.equals(document.getString("companyId"))){
+                                double amount = document.getDouble("amount");
+                                totalExpenses += amount;
+                            }
+
                         }
 
                         // Calculate equity as (Total Assets - Total Expenses)
@@ -261,8 +271,6 @@ public class BalanceSheetActivity extends AppCompatActivity {
         balanceSheetHeading.setText("Balance Sheet as of "+fullDate);
         balanceSheetHeading.setVisibility(View.VISIBLE);
         balanceSheetHeading.setPaintFlags(balanceSheetHeading.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-
-
     }
 
 }

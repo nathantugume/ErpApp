@@ -2,6 +2,7 @@ package com.example.erpapp.adapters;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
         Product product = productList.get(position);
         int qty = product.getQuantity();
         String quantity = String.valueOf(qty);
+        product.setSaleBy("Cash");
 
         holder.productNameTextView.setText(product.getProduct_name());
         holder.quantityTextView.setText(quantity);
@@ -67,18 +69,19 @@ public class SalesProductAdapter extends RecyclerView.Adapter<SalesProductAdapte
 
                 // Check the selected sale type (retail or wholesale)
                 String selectedSaleType = holder.saleTypeSpinner.getSelectedItem().toString();
+                Log.d("selected","item"+selectedSaleType);
                 if (selectedSaleType.equals("Retail")) {
                     // Display retail price
+                    product.setSaleType(selectedSaleType);
                     holder.productPriceEditText.setText(String.valueOf(product.getPrice()));
                     holder.productPriceEditText.requestFocus();
-                    product.setSaleBy("Retail");
-                } else if (selectedSaleType.equals("Wholesale")) {
+
+                } else {
                     // Display wholesale price
+                    product.setSaleType(selectedSaleType);
                     holder.productPriceEditText.setText(String.valueOf(product.getWholeSalePrice()));
                     holder.productPriceEditText.requestFocus();
-                    product.setSaleBy("WholeSale");
-                } else {
-                    holder.productPriceEditText.setText(String.valueOf(product.getPrice()));
+
                 }
             }
 

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,8 +104,14 @@ public class AccountsActivity extends AppCompatActivity {
     }
 
     private void fetchAccountsFromFirestore() {
+
+        Source source = Source.DEFAULT;
+        // Retrieve companyId from SharedPreferences
+        SharedPreferences sharedPreferences = this.getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        String companyId = sharedPreferences.getString("companyId", null);
         firestore.collection("accounts")
-                .get()
+                .whereEqualTo("companyId",companyId)
+                .get(source)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         accountItemList.clear(); // Clear existing data

@@ -8,6 +8,10 @@ public class StockItem {
     private double price;
     private Date purchaseDate;
 
+    public StockItem() {
+
+    }
+
     public Date getPurchaseDate() {
         return purchaseDate;
     }
