@@ -121,7 +121,6 @@ public class StockReportActivity extends AppCompatActivity {
 
                             totalPrice += price*quantity;
 
-                            Log.d("stock", "name"+price);
                             // Create a StockItem object
                             StockItem stockItem = new StockItem(productName, quantity, price);
 
@@ -137,7 +136,7 @@ public class StockReportActivity extends AppCompatActivity {
 
                         NumberFormat number = NumberFormat.getInstance(Locale.getDefault());
                         totalPriceTextView.setText("Net Amount: Ugx "+number.format(totalPrice));
-                        stockReportAdapter.setData(stockItemList);
+//                        stockReportAdapter.setData(stockItemList);
                         stockReportAdapter.notifyDataSetChanged();
                     }
                 });
