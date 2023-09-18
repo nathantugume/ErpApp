@@ -170,6 +170,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         return expenseItemList.size();
     }
 
+    public void add(Expense expense) {
+        expenseItemList.add(expense);
+        notifyDataSetChanged();
+    }
+
     public class ExpenseViewHolder extends RecyclerView.ViewHolder {
         TextView expenseDescTextView,exAmountTextView, eAccountTextView, paidToTextView, dateTextView, timeTextView, paidByTextView, referenceTextView;
         ImageView menuIcon;

@@ -193,6 +193,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
         return accountItemList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    public void add(AccountItem accounts) {
+        accountItemList.add(accounts);
+        notifyDataSetChanged();
+    }
+
     public class AccountViewHolder extends RecyclerView.ViewHolder {
         TextView accountNameTextView;
         TextView transactionType;

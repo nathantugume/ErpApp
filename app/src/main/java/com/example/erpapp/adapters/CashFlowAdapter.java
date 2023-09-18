@@ -31,6 +31,7 @@ public class CashFlowAdapter extends RecyclerView.Adapter<CashFlowAdapter.CashFl
 
         holder.dateTextView.setText(cashFlowItem.getDate());
         holder.cashFlowAmountTextView.setText(String.valueOf(cashFlowItem.getCashFlowAmount()));
+        holder.descTextView.setText(cashFlowItem.getPaymentDec());
     }
 
     @Override
@@ -46,11 +47,13 @@ public class CashFlowAdapter extends RecyclerView.Adapter<CashFlowAdapter.CashFl
     public class CashFlowViewHolder extends RecyclerView.ViewHolder {
         TextView dateTextView;
         TextView cashFlowAmountTextView;
+        TextView descTextView;
 
         public CashFlowViewHolder(@NonNull View itemView) {
             super(itemView);
             dateTextView = itemView.findViewById(R.id.dateTextView);
             cashFlowAmountTextView = itemView.findViewById(R.id.cashFlowAmountTextView);
+            descTextView = itemView.findViewById(R.id.descAmountTextView);
         }
     }
 }

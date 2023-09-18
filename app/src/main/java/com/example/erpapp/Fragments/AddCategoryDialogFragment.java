@@ -2,6 +2,7 @@ package com.example.erpapp.Fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,27 +16,37 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.erpapp.Classes.Category;
 import com.example.erpapp.R;
+import com.example.erpapp.adapters.CategoryAdapter;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class AddCategoryDialogFragment extends DialogFragment {
 
     private TextInputEditText categoryNameEditText,categoryDesc;
-
-
+    private CategoryAdapter categoryAdapter;
+    private final List<Category> categoryList = new ArrayList<>();
+    public AddCategoryDialogFragment(CategoryAdapter categoryAdapter){
+        this.categoryAdapter = categoryAdapter;
+    }
+    @SuppressLint("NotifyDataSetChanged")
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
         FirebaseApp.initializeApp(getContext());
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        categoryAdapter = new CategoryAdapter(categoryList);
 
         View view = LayoutInflater.from(requireContext())
                 .inflate(R.layout.fragment_add_category_dialog, null);
@@ -62,11 +73,9 @@ public class AddCategoryDialogFragment extends DialogFragment {
 
                 if (desc.isEmpty()){
                     categoryDesc.setError("please enter category details");
-                    categoryDesc.setFocusable(true);
                     categoryDesc.requestFocus();
                 } else if (categoryName.isEmpty()) {
                     categoryNameEditText.setError("please enter category name");
-                    categoryNameEditText.setFocusable(true);
                     categoryNameEditText.requestFocus();
                 } else if (companyId.isEmpty()) {
                     Toast.makeText(getContext(), "Company Id is empty please contact your Administrator to fix this", Toast.LENGTH_LONG).show();
@@ -76,20 +85,19 @@ public class AddCategoryDialogFragment extends DialogFragment {
                     String categoryId = firestore.collection("categories").document().getId(); // Generate category ID
                     DocumentReference categoryRef = firestore.collection("categories").document(categoryId);
 
-                    Map<String, Object> categoryData = new HashMap<>();
-                    categoryData.put("categoryId", categoryId); // Save category ID
-                    categoryData.put("companyId", companyId);
-                    categoryData.put("name", categoryName);
-                    categoryData.put("description",desc);
-
-                    categoryRef.set(categoryData)
+                    Category category = new Category(categoryId,companyId,categoryName,desc);
+                    categoryAdapter.addCategory(category);
+                    categoryRef.set(category)
                             .addOnSuccessListener(aVoid -> {
                                 // Success
                                 Toast.makeText(getContext(), "Category added successfully", Toast.LENGTH_SHORT).show();
+                                categoryAdapter.notifyDataSetChanged();
                                 alertDialog.dismiss();
+
                             })
                             .addOnFailureListener(e -> {
                                 // Error handling
+                                Toast.makeText(getContext(), "Error: "+e.getMessage(), Toast.LENGTH_LONG).show();
                             });
                 }
 

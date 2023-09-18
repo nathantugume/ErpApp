@@ -51,7 +51,7 @@ public class LauncherActivity extends AppCompatActivity {
 
                         if (isFirstTime) {
                             // It's the user's first time, navigate to registration or login activity
-                            startActivity(new Intent(LauncherActivity.this, RegistrationActivity.class));
+                            startActivity(new Intent(LauncherActivity.this, MainActivity.class));
                         } else {
                             // User has used the app before
                             // Check if the user is authenticated with Firebase
@@ -61,7 +61,7 @@ public class LauncherActivity extends AppCompatActivity {
 
                             } else {
                                 // User is not authenticated, navigate to the login activity
-                                startActivity(new Intent(LauncherActivity.this, LoginActivity.class));
+                                startActivity(new Intent(LauncherActivity.this, MainActivity.class));
                             }
                         }
 

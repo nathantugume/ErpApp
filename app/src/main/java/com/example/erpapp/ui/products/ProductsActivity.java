@@ -1,5 +1,6 @@
 package com.example.erpapp.ui.products;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -75,7 +76,7 @@ public class ProductsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddProductDialogFragment addProductDialogFragment = new AddProductDialogFragment();
+                AddProductDialogFragment addProductDialogFragment = new AddProductDialogFragment(productAdapter);
                 addProductDialogFragment.show(getSupportFragmentManager(), "AddProductDialog");
             }
         });
@@ -178,6 +179,7 @@ public class ProductsActivity extends AppCompatActivity {
         return filteredProducts;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void loadProductsFromFirestore() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         shimmerFrameLayout.setVisibility(View.VISIBLE);

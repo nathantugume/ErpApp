@@ -19,7 +19,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.erpapp.Classes.AccountItem;
 import com.example.erpapp.R;
+import com.example.erpapp.adapters.AccountAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,9 +37,14 @@ public class AddAccountsDialogFragment extends DialogFragment {
     private String mParam1;
     private String mParam2;
     private String selectedTransactionType;
+    private AccountAdapter accountAdapter;
     private final String[] transaction = {""};
     public AddAccountsDialogFragment() {
         // Required empty public constructor
+    }
+    public AddAccountsDialogFragment(AccountAdapter accountAdapter) {
+        this.accountAdapter = accountAdapter;
+
     }
 
     public static AddAccountsDialogFragment newInstance(String param1, String param2) {
@@ -131,6 +138,8 @@ public class AddAccountsDialogFragment extends DialogFragment {
                     accountsData.put("transaction_type", selectedTransactionType); // Changed to transaction[0]
                     accountsData.put("account_name", transactionName);
                     accountsData.put("companyId",companyId);
+                    AccountItem accounts = new AccountItem(transactionName,selectedTransactionType,accountId);
+                    accountAdapter.add(accounts);
 
                     accountsRef.set(accountsData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {

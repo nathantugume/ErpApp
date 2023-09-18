@@ -3,9 +3,7 @@
     <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-
-    android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="10dp">
@@ -26,7 +24,7 @@
                 >
 
                 <LinearLayout
-                    android:layout_width="206dp"
+                    android:layout_width="193dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:orientation="vertical"
@@ -59,109 +57,120 @@
                     <!-- Add more views if needed -->
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="30dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="30dp"
+                    android:orientation="vertical"
 
                     >
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
+                        android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="Quantity:"
                             android:textColor="#000"
-                            android:text="Quantity:" />
+                            android:textSize="15sp" />
+
                         <TextView
                             android:id="@+id/quantity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="20"
                             android:textColor="#000"
-                            android:text="20" />
+                            android:textSize="15sp" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
+                        android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="Price:"
                             android:textColor="#000"
-                            android:text="Price:" />
+                            android:textSize="15sp" />
+
                         <TextView
                             android:id="@+id/price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="20"
                             android:textColor="#000"
-                            android:text="20" />
+                            android:textSize="15sp" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
+                        android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="Buying Price:"
                             android:textColor="#000"
-                            android:text="Buying Price:" />
+                            android:textSize="15sp" />
+
                         <TextView
                             android:id="@+id/buying_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="20"
                             android:textColor="#000"
-                            android:text="20" />
+                            android:textSize="15sp" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
+                        android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="WholeSale:"
                             android:textColor="#000"
-                            android:text="WholeSale:" />
+                            android:textSize="15sp" />
+
                         <TextView
                             android:id="@+id/wholesale_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="20"
                             android:textColor="#000"
-                            android:text="20" />
+                            android:textSize="15sp" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
+                        android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="Category:"
                             android:textColor="#000"
-                            android:text="Category:" />
+                            android:textSize="15sp" />
+
                         <TextView
                             android:id="@+id/category"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
+                            android:text="20"
                             android:textColor="#000"
-                            android:text="20" />
+                            android:textSize="15sp" />
                     </LinearLayout>
                 </LinearLayout>
 

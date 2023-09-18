@@ -96,7 +96,7 @@ public class AccountsActivity extends AppCompatActivity {
         fabAddAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddAccountsDialogFragment addAccountsDialogFragment = new AddAccountsDialogFragment();
+                AddAccountsDialogFragment addAccountsDialogFragment = new AddAccountsDialogFragment(accountAdapter);
                 addAccountsDialogFragment.show(getSupportFragmentManager(),"AddAccountDialog");
             }
         });

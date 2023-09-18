@@ -3,7 +3,6 @@ package com.example.erpapp.Classes;
 public class AccountItem {
     private String accountName;
     private String transaction_type;
-
     private String accountId;
 
     public AccountItem(String accountName, String transaction_type, String accountId) {

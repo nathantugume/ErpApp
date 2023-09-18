@@ -19,8 +19,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.erpapp.Classes.Expense;
 import com.example.erpapp.Classes.LoadExpensesTask;
 import com.example.erpapp.R;
+import com.example.erpapp.adapters.ExpenseAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,8 +41,14 @@ public class AddExpenseFragment extends DialogFragment {
     private String paidTo, paymentDesc, amount, reference;
     private String selectedPaymentMethod;
     private String selectedAccount;
+    private ExpenseAdapter expenseAdapter;
 
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+    public AddExpenseFragment(ExpenseAdapter expenseAdapter){
+        this.expenseAdapter = expenseAdapter;
+
+    }
 
 
     @NonNull
@@ -49,17 +57,6 @@ public class AddExpenseFragment extends DialogFragment {
 
         View view = LayoutInflater.from(requireContext())
                 .inflate(R.layout.fragment_add_expense, null);
-
-        firestore.setFirestoreSettings(new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .build());
-
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
-                .build();
-        firestore.setFirestoreSettings(settings);
-
-
 
         paidToEditText = view.findViewById(R.id.paidToEditText);
         paymentDescEditText = view.findViewById(R.id.paymentDescEditText);
@@ -154,6 +151,9 @@ public class AddExpenseFragment extends DialogFragment {
                     expenseData.put("date", formattedDate);
                     expenseData.put("time", formattedTime);
                     expenseData.put("companyId", companyId);
+
+                    Expense expense = new Expense(expenseId,paymentDesc,selectedPaymentMethod,amount_paid,reference,selectedAccount,paidTo,formattedDate,formattedTime);
+                    expenseAdapter.add(expense);
 
                     expenseRef
                             .set(expenseData)

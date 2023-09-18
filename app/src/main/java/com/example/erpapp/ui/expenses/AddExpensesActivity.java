@@ -143,7 +143,7 @@ public class AddExpensesActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddExpenseFragment addExpenseFragment = new AddExpenseFragment();
+                AddExpenseFragment addExpenseFragment = new AddExpenseFragment(expenseAdapter);
                 addExpenseFragment.show(getSupportFragmentManager(), "AddExpenseFragment");
             }
         });

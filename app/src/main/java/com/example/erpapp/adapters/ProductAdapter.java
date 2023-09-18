@@ -213,4 +213,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             menuIcon = itemView.findViewById(R.id.menuIcon);
         }
     }
+
+    // Add this method to add a new product to the dataset
+    public void addProduct(Product product) {
+        productList.add(product);
+        notifyDataSetChanged(); // Notify the adapter that the data set has changed
+    }
 }

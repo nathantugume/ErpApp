@@ -5,6 +5,7 @@ public class CashFlowItem {
     private double cashFlowAmount;
     private  String paymentDec;
 
+
     public CashFlowItem(String date, double cashFlowAmount, String paymentDec) {
         this.date = date;
         this.cashFlowAmount = cashFlowAmount;

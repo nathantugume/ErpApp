@@ -24,7 +24,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.erpapp.Classes.LoadCategoriesTask;
+import com.example.erpapp.Classes.Product;
 import com.example.erpapp.R;
+import com.example.erpapp.adapters.ProductAdapter;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentReference;
@@ -50,6 +52,8 @@ public class AddProductDialogFragment extends DialogFragment {
     private TextInputEditText quantityEditText;
     private TextInputEditText barcodeEditText;
     private Source source = Source.DEFAULT;
+
+    private ProductAdapter productsAdapter; // Add this member variable
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
 
@@ -59,7 +63,10 @@ public class AddProductDialogFragment extends DialogFragment {
     private String selectedCategory = "";
     private Spinner categorySpinner;
     private String productName, productDesc, price, quantity, barcode, buyingPrice, wholesalePrice;
-
+    // Constructor to pass the productsAdapter reference
+    public AddProductDialogFragment(ProductAdapter productsAdapter) {
+        this.productsAdapter = productsAdapter;
+    }
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -134,38 +141,28 @@ public class AddProductDialogFragment extends DialogFragment {
                                     String productId = firestore.collection("products").document().getId(); // Generate product ID
                                     DocumentReference productRef = firestore.collection("products").document(productId);
 
-                                    int pricedata = Integer.parseInt(price);
-                                    int qty = Integer.parseInt(quantity);
-                                    int bPrice = Integer.parseInt(buyingPrice);
-                                    Map<String, Object> productData = new HashMap<>();
-                                    productData.put("productId", productId); // Save product ID
-                                    productData.put("product_name", productName);
-                                    productData.put("product_desc", productDesc);
-                                    productData.put("price", pricedata);
-                                    productData.put("quantity", qty);
-                                    productData.put("barcode", barcode);
-                                    productData.put("buying_price", bPrice);
-                                    productData.put("category", selectedCategory);
-                                    productData.put("companyId", companyId);
-                                    productData.put("wholeSalePrice", wholesalePrice);
-
-                                    productRef.set(productData)
+                                    // Add the new product to the productsAdapter
+                                    Product newProduct = new Product(productId, productName, productDesc, Integer.parseInt(price), Integer.parseInt(quantity), barcode, Integer.parseInt(buyingPrice), selectedCategory, Integer.parseInt(wholesalePrice), companyId);
+                                    productsAdapter.addProduct(newProduct);
+                                    productRef.set(newProduct)
                                             .addOnSuccessListener(aVoid -> {
                                                 // Success
                                                 Toast.makeText(getContext(), "Product added successfully", Toast.LENGTH_SHORT).show();
+
                                                 alertDialog.dismiss();
                                             })
                                             .addOnFailureListener(e -> {
                                                 // Error handling
+                                                Toast.makeText(getContext(), "Error: "+e.getMessage(), Toast.LENGTH_LONG).show();
                                             });
                                 } else {
                                     // Product with the same name and companyId already exists
-                                    Toast.makeText(getContext(), "Product with the same name already exists", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Product with the same name already exists"+productName, Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .addOnFailureListener(e -> {
                                 // Error handling
-                                Toast.makeText(getContext(), "error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "error: "+e.getMessage(), Toast.LENGTH_LONG).show();
                             });
                 }
 

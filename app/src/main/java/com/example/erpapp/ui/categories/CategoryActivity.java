@@ -14,8 +14,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.erpapp.Admin.AdminDashboardActivity;
+import com.example.erpapp.Classes.Category;
+import com.example.erpapp.Classes.Product;
 import com.example.erpapp.R;
 import com.example.erpapp.adapters.CategoryAdapter;
 import com.example.erpapp.Fragments.AddCategoryDialogFragment;
@@ -36,7 +39,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private CategoryAdapter categoryAdapter;
-    private final List<DocumentSnapshot> categoryList = new ArrayList<>();
+    private final List<Category> categoryList = new ArrayList<>();
 
     private MaterialToolbar toolbar;
     private ShimmerFrameLayout shimmerFrameLayout;
@@ -100,7 +103,7 @@ public class CategoryActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddCategoryDialogFragment addCategoryDialogFragment = new AddCategoryDialogFragment();
+                AddCategoryDialogFragment addCategoryDialogFragment = new AddCategoryDialogFragment(categoryAdapter);
                 addCategoryDialogFragment.show(getSupportFragmentManager(), "AddCategoryDialog");
             }
         });
@@ -117,21 +120,23 @@ public class CategoryActivity extends AppCompatActivity {
                 .whereEqualTo("companyId",companyId)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    int initialSize = categoryList.size();
                     categoryList.clear();
-                    categoryList.addAll(queryDocumentSnapshots.getDocuments());
-                    int finalSize = categoryList.size();
-                    if (finalSize > initialSize) {
-                        int startPosition = initialSize;
-                        int itemCount = finalSize - initialSize;
-                        categoryAdapter.notifyItemRangeInserted(startPosition, itemCount);
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                        Category category = documentSnapshot.toObject(Category.class);
+                        categoryList.add(category);
+
+                    }
+                    if (categoryList.isEmpty()){
+                        shimmerFrameLayout.stopShimmer();
+                        Toast.makeText(this, "Category list is empty", Toast.LENGTH_LONG).show();
+                    }else {
                         shimmerFrameLayout.setVisibility(View.GONE);
                         shimmerFrameLayout.stopShimmer();
-
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Handle error
+                    Toast.makeText(this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 }

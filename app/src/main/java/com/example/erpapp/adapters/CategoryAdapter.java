@@ -1,5 +1,6 @@
 package com.example.erpapp.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,18 +15,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.erpapp.Classes.Category;
 import com.example.erpapp.R;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
-    private final List<DocumentSnapshot> categoryList;
+    private final List<Category> categoryList;
     private Context context;
 
-    public CategoryAdapter(List<DocumentSnapshot> categoryList) {
+    public CategoryAdapter(List<Category> categoryList) {
         this.categoryList = categoryList;
     }
 
@@ -39,10 +40,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-        DocumentSnapshot categorySnapshot = categoryList.get(position);
-        String categoryName = (String) categorySnapshot.get("name");
-        String desc = (String) categorySnapshot.get("description");
-        String categoryId = categorySnapshot.getId();
+        Category category = categoryList.get(position);
+
+        String categoryName = category.getName();
+        String desc = category.getDescription();
+        String categoryId = category.getCategoryId();
 
         holder.categoryNameTextView.setText(categoryName);
         holder.categoryDesc.setText(desc);
@@ -93,7 +95,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             popupMenu.show();
         });
     }
-
+    @SuppressLint("NotifyDataSetChanged")
+    public void addCategory(Category category) {
+        categoryList.add(category);
+        notifyDataSetChanged(); // Notify the adapter that the data set has changed
+    }
     private void showEditCategoryDialog(String categoryId, String currentName, String currentDesc) {
         // Implement your edit category dialog here
         // You can pass categoryId, currentName, and currentDesc as parameters
@@ -165,4 +171,5 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             menuIcon = itemView.findViewById(R.id.menuIcon);
         }
     }
+
 }
