@@ -22,7 +22,6 @@
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="Admin Dashboard"
                 app:layout_scrollFlags="enterAlways|snap|scroll"
                 app:menu="@menu/admin_top_menu"
                 app:navigationIcon="@drawable/ic_menu"

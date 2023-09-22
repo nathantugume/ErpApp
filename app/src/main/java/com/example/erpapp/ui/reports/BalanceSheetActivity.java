@@ -202,7 +202,6 @@ public class BalanceSheetActivity extends AppCompatActivity {
                             }
 
                         }
-
                         // Calculate equity as (Total Assets - Total Expenses)
 
                         double equity = totalAssets - totalExpenses;

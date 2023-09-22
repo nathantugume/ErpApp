@@ -7,11 +7,13 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.erpapp.Classes.OptionsMenuHelper;
@@ -30,14 +32,14 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class AdminDashboardActivity extends AppCompatActivity {
-
+private MaterialToolbar topAppbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_dashboard);
         DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
-        MaterialToolbar topAppbar = findViewById(R.id.topAppBar);
+        topAppbar = findViewById(R.id.topAppBar);
         topAppbar.setNavigationOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
 
         NavigationView navigationView = findViewById(R.id.drawer_navigation);
@@ -73,6 +75,35 @@ public class AdminDashboardActivity extends AppCompatActivity {
         CardView report_card = findViewById(R.id.reports_card);
         CardView settings_card = findViewById(R.id.settings_card);
         CardView users_card = findViewById(R.id.users_card);
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_role", MODE_PRIVATE);
+         String role = sharedPreferences.getString("role", null);
+
+
+       switch (role.toLowerCase()){
+           case "sales":
+               settings_card.setVisibility(View.GONE);
+               users_card.setVisibility(View.GONE);
+               topAppbar.setTitle("Sales Dashboard");
+               topAppbar.setTitleCentered(true);
+               break;
+           case "store":
+               settings_card.setVisibility(View.GONE);
+               users_card.setVisibility(View.GONE);
+               sales_card.setVisibility(View.GONE);
+               expenses_card.setVisibility(View.GONE);
+               report_card.setVisibility(View.GONE);
+               topAppbar.setTitle("Store Dashboard");
+               topAppbar.setTitleCentered(true);
+                break;
+           default:
+               topAppbar.setTitle("Admin Dashboard");
+               topAppbar.setTitleCentered(true);
+               Toast.makeText(this, "Logged in as Admin", Toast.LENGTH_SHORT).show();
+               break;
+       }
+
+
         category_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +41,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +56,7 @@ public class UsersActivity extends AppCompatActivity {
     private Spinner roleSpinner;
     private  String[] roles = {"Admin", "Sales", "Store"};
     private MaterialToolbar toolbar;
+    private  String companyId;
 
 
     @Override
@@ -63,6 +66,8 @@ public class UsersActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerViewUsers);
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        companyId = sharedPreferences.getString("companyId", null);
 
         // Initialize user list and adapter
         userList = new ArrayList<>();
@@ -118,7 +123,10 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void fetchUserDataFromFirestore() {
-        usersRef.get()
+        Source source = Source.CACHE;
+        usersRef
+                .whereEqualTo("companyId",companyId)
+                .get(source)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -244,6 +252,7 @@ public class UsersActivity extends AppCompatActivity {
                 // Initialize Firestore
                 FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
+
                 // Create a User object with the provided details
                 User user = new User();
                 user.setUserId(uid);
@@ -251,6 +260,7 @@ public class UsersActivity extends AppCompatActivity {
                 user.setEmail(email);
                 user.setFullName(fullName);
                 user.setPassword(password);
+                user.setCompanyId(companyId);
 
                 // Add the user to the "users" collection in Firestore
                 firestore.collection("users")
