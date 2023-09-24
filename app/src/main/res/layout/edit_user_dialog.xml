@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="User ID"
+        android:visibility="gone"
         android:inputType="text"
         />
 
@@ -49,6 +50,7 @@
         android:id="@+id/passwordInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:endIconMode="password_toggle"
         android:hint="Password">
 
         <com.google.android.material.textfield.TextInputEditText

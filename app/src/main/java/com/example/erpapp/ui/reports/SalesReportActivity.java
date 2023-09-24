@@ -2,6 +2,7 @@ package com.example.erpapp.ui.reports;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -42,12 +44,14 @@ public class SalesReportActivity extends AppCompatActivity {
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault()); // You can specify the desired locale
 
-
+    private String companyId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sales_report);
 
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        companyId = sharedPreferences.getString("companyId", null);
         MaterialToolbar toolbar;
 
         //        toolbar
@@ -128,10 +132,12 @@ public class SalesReportActivity extends AppCompatActivity {
         String fromDate = formatDate(fromDateCalendar.getTime());
         String toDate = formatDate(toDateCalendar.getTime());
 
+        Source source = Source.CACHE;
+
         firestore.collection("sales")
                 .whereGreaterThanOrEqualTo("saleDate", fromDate)
                 .whereLessThanOrEqualTo("saleDate", toDate)
-                .get()
+                .get(source)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                     @Override
@@ -140,17 +146,20 @@ public class SalesReportActivity extends AppCompatActivity {
                         double totalSales = 0.0; // Initialize total sales
 
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            String saleDate = document.getString("saleDate");
-                            String productName = document.getString("productName");
-                            double saleAmount = document.getDouble("productPrice");
-                            Long quantity =  document.getLong("quantity");
-                            String companyId = document.getString("companyId");
+                            if (document.getString("companyId").equals(companyId)){
+                                String saleDate = document.getString("saleDate");
+                                String productName = document.getString("productName");
+                                double saleAmount = document.getDouble("productPrice");
+                                Long quantity =  document.getLong("quantity");
+                                String companyId = document.getString("companyId");
 
-                            Log.d("product", "name "+productName);
+                                Log.d("product", "name "+productName);
 
-                            SalesItem salesItem = new SalesItem(saleDate, productName, saleAmount, quantity,companyId);
-                            salesItemList.add(salesItem);
-                            totalSales += saleAmount*quantity;
+                                SalesItem salesItem = new SalesItem(saleDate, productName, saleAmount, quantity,companyId);
+                                salesItemList.add(salesItem);
+                                totalSales += saleAmount*quantity;
+                            }
+
                         }
                         // Display the total sales in a TextView
                         TextView totalSalesTextView = findViewById(R.id.totalSalesAmountTextView);

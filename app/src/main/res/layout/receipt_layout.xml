@@ -1,0 +1,37 @@
+<!-- receipt_layout.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Company name and address -->
+    <TextView
+        android:id="@+id/companyNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Company Name"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/companyAddressTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Company Address"/>
+
+    <!-- Product list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/receiptRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <!-- Total price -->
+    <TextView
+        android:id="@+id/totalPriceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total: Ugx 0.00"
+        android:textStyle="bold"/>
+
+</LinearLayout>

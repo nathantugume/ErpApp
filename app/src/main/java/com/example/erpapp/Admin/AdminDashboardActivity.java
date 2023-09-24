@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.erpapp.Classes.OptionsMenuHelper;
 import com.example.erpapp.R;
 import com.example.erpapp.ui.Users.LoginActivity;
+import com.example.erpapp.ui.Users.UserEditActivity;
 import com.example.erpapp.ui.Users.UsersActivity;
 import com.example.erpapp.ui.expenses.ExpensesActivity;
 import com.example.erpapp.ui.categories.CategoryActivity;
@@ -60,6 +61,10 @@ private MaterialToolbar topAppbar;
                 }else if (item.getItemId() == R.id.product) {
                     Intent intent = new Intent(AdminDashboardActivity.this, ProductsActivity.class);
                     startActivity(intent);
+                } else if (item.getItemId() == R.id.profile) {
+                    Intent intent = new Intent(AdminDashboardActivity.this, UserEditActivity.class);
+                    startActivity(intent);
+
                 }
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
