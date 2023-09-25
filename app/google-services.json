@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "253380978308",
-    "project_id": "erpapp-cadcc",
-    "storage_bucket": "erpapp-cadcc.appspot.com"
+    "project_number": "38489618175",
+    "project_id": "salestrackingapp-4abc0",
+    "storage_bucket": "salestrackingapp-4abc0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:253380978308:android:855f87edd4d05fe465c4d1",
+        "mobilesdk_app_id": "1:38489618175:android:4db24e8f52d89d81b9beca",
         "android_client_info": {
-          "package_name": "com.example.erpapp"
+          "package_name": "com.example.salestrackingapp"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "253380978308-mm81e8e73c5cqdoij3725db8566gdup4.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCy1HPM0Sk_0L9e9Ui6UrxASi1rxFhsnxI"
+          "current_key": "AIzaSyDtrBTec2Hre7as1vhQspTV96dMKNhGu8Q"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "253380978308-mm81e8e73c5cqdoij3725db8566gdup4.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

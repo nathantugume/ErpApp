@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.erpapp'
+    namespace 'com.example.salestrackingapp'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.erpapp"
+        applicationId "com.example.salestrackingapp"
         minSdk 24
         targetSdk 33
         versionCode 1
