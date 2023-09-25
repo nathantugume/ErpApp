@@ -3,10 +3,12 @@ package com.example.erpapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -29,7 +31,8 @@ public class LauncherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_launcher);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         // Initialize views
-        LinearProgressIndicator launcherProgress = findViewById(R.id.launcherProgress);
+      //  LinearProgressIndicator launcherProgress = findViewById(R.id.launcherProgress);
+        ProgressBar launcherProgress = findViewById(R.id.launcherProgress);
 
         // Hide the progress bar initially
         launcherProgress.setVisibility(View.GONE);
@@ -39,6 +42,7 @@ public class LauncherActivity extends AppCompatActivity {
             @Override
             public void run() {
                 launcherProgress.setVisibility(View.VISIBLE);
+
                 // Check if the user is logged in to Firebase or if it's the first app launch
                 // You can add your authentication logic here
 

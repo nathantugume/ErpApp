@@ -66,7 +66,7 @@
     <string name="product">Product:</string>
     <string name="select_from_date">Select From Date</string>
     <string name="select_to_date">Select To Date</string>
-    <string name="welcome_to_erp_mobile_app_n_please_create_an_account_to_use_our_services">Welcome To Sales Tracking Mobile App\n please Create an Account to Use Our Services</string>
+    <string name="welcome_to_erp_mobile_app_n_please_create_an_account_to_use_our_services">We\'re thrilled to have you on board! Whether you\'re a seasoned sales pro or just starting out, our app is designed to supercharge your sales journey. By creating an account, you\'ll gain access to a world of features and tools that will help you boost your sales, streamline your processes, and achieve your goals</string>
     <string name="log_out">Log out</string>
     <string name="email">Email:</string>
     <string name="allow_negative_stock_sales">Allow Negative Stock Sales</string>
