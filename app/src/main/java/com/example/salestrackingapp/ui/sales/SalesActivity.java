@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,8 +32,11 @@ import com.example.salestrackingapp.Fragments.CaptureAct;
 import com.example.salestrackingapp.R;
 import com.example.salestrackingapp.adapters.ReceiptProductAdapter;
 import com.example.salestrackingapp.adapters.SalesProductAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -106,28 +110,7 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
     }
 
     private void printReceipt() {
-        // Inflate the custom receipt layout
-        View receiptView = getLayoutInflater().inflate(R.layout.receipt_layout, null);
 
-// Find views in the layout
-        TextView companyNameTextView = receiptView.findViewById(R.id.companyNameTextView);
-        TextView companyAddressTextView = receiptView.findViewById(R.id.companyAddressTextView);
-        RecyclerView receiptRecyclerView = receiptView.findViewById(R.id.receiptRecyclerView);
-        TextView totalPriceTextView = receiptView.findViewById(R.id.totalPriceTextView);
-
-// Populate the views with data
-        companyNameTextView.setText("Your Company Name");
-        companyAddressTextView.setText("123 Main St, City, Country");
-
-// Set up a RecyclerView adapter for the product list
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        receiptRecyclerView.setLayoutManager(layoutManager);
-        ReceiptProductAdapter productAdapter = new ReceiptProductAdapter(salesList);
-        receiptRecyclerView.setAdapter(productAdapter);
-
-// Calculate and set the total price
-        double total = calculateTotalPrice();
-        totalPriceTextView.setText(String.format(Locale.getDefault(), "Total: Ugx%.2f", total));
 
 // Create a PrintManager instance
         PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
@@ -135,16 +118,33 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
 // Check if there is a printer available
         if (printManager != null) {
             // Create a print job
-            PrintJob printJob = printManager.print("SalesReceipt",new SalesReceiptPDFGenerator(this,salesList) , null);
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            String uid = auth.getCurrentUser().getUid();
 
-            // Check if the print job was successfully created
-            if (printJob != null) {
-                // Notify the user that printing has started
-                Toast.makeText(this, "Printing receipt...", Toast.LENGTH_SHORT).show();
-            } else {
-                // Notify the user if printing failed
-                Toast.makeText(this, "Failed to start printing", Toast.LENGTH_SHORT).show();
-            }
+            DocumentReference docRef = firestore.collection("users").document(uid);
+
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()){
+
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        String userName = documentSnapshot.getString("fullName");
+
+                        PrintJob printJob = printManager.print("SalesReceipt",new SalesReceiptPDFGenerator(SalesActivity.this,salesList,userName) , null);
+
+                        // Check if the print job was successfully created
+                        if (printJob != null) {
+                            // Notify the user that printing has started
+                            Toast.makeText(SalesActivity.this, "Printing receipt...", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Notify the user if printing failed
+                            Toast.makeText(SalesActivity.this, "Failed to start printing", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+
         } else {
             // Notify the user if no printing service is available
             Toast.makeText(this, "Printing service is not available", Toast.LENGTH_SHORT).show();
