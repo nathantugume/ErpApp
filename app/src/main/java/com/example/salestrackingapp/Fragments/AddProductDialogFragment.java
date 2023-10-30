@@ -2,6 +2,7 @@ package com.example.salestrackingapp.Fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.example.salestrackingapp.Classes.LoadCategoriesTask;
 import com.example.salestrackingapp.Classes.Product;
 import com.example.salestrackingapp.R;
 import com.example.salestrackingapp.adapters.ProductAdapter;
+import com.example.salestrackingapp.ui.products.ProductsActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,7 +44,7 @@ public class AddProductDialogFragment extends DialogFragment {
     private TextInputEditText barcodeEditText;
     private Source source = Source.DEFAULT;
 
-    private ProductAdapter productsAdapter; // Add this member variable
+    private ProductAdapter productsAdapter;
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
 
@@ -56,6 +58,7 @@ public class AddProductDialogFragment extends DialogFragment {
     public AddProductDialogFragment(ProductAdapter productsAdapter) {
         this.productsAdapter = productsAdapter;
     }
+    @SuppressLint("NotifyDataSetChanged")
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -83,6 +86,18 @@ public class AddProductDialogFragment extends DialogFragment {
             }
         });
 
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedCategory = (String) parent.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setView(view)
                 .setTitle("Add Product")
@@ -102,17 +117,7 @@ public class AddProductDialogFragment extends DialogFragment {
                 wholesalePrice = wholeSalePriceEdt.getText().toString();
 
                 // Set the item selection listener
-                categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        selectedCategory = (String) parent.getSelectedItem();
-                    }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        // Do nothing
-                    }
-                });
                 // Retrieve companyId from SharedPreferences
                 SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
                 String companyId = sharedPreferences.getString("companyId", null);
@@ -137,6 +142,8 @@ public class AddProductDialogFragment extends DialogFragment {
                                             .addOnSuccessListener(aVoid -> {
                                                 // Success
                                                 Toast.makeText(getContext(), "Product added successfully", Toast.LENGTH_SHORT).show();
+
+                                               productsAdapter.notifyDataSetChanged();
 
                                                 alertDialog.dismiss();
                                             })

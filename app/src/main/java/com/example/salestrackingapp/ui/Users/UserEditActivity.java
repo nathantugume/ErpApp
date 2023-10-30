@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.salestrackingapp.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +31,7 @@ public class UserEditActivity extends AppCompatActivity {
     CollectionReference usersRef = firestore.collection("users");
     private String currentUserId;
     FirebaseUser currentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +41,15 @@ public class UserEditActivity extends AppCompatActivity {
         emailEdt = findViewById(R.id.emailEditText);
         oldPassword = findViewById(R.id.oldPasswordEditText);
         newPassword = findViewById(R.id.passwordEditText);
-        confirmNewPassword = findViewById(R.id.confirmPasswordEditText);
+        MaterialToolbar toolbar;
+        //        toolbar
+        toolbar = findViewById(R.id.topAppBar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         cancelBtn = findViewById(R.id.cancelButton);
         save = findViewById(R.id.saveButton);

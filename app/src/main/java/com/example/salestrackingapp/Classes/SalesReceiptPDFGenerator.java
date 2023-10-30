@@ -143,7 +143,7 @@ public class SalesReceiptPDFGenerator extends PrintDocumentAdapter {
                             divider.setAlignment(Element.ALIGN_CENTER);
                             document.add(divider);
 
-                            Paragraph servedBy = new Paragraph("Served By: "+userName, font);
+                            Paragraph servedBy = new Paragraph("Served By: "+userName, font2);
                             servedBy.setAlignment(Element.ALIGN_CENTER);
                             document.add(servedBy);
 

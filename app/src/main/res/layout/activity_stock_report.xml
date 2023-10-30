@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.reports.ReportsActivity">
+    tools:context=".ui.reports.StockReportActivity">
 
     <!-- Top app bar -->
     <com.google.android.material.appbar.AppBarLayout
@@ -67,5 +67,17 @@
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
         app:menu="@menu/bottom_navigation_menu" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="print"
+        android:textSize="16sp"
+        android:drawableEnd="@drawable/ic_print"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="200dp"
+        android:layout_marginEnd="10dp"/>
+        />
 </RelativeLayout>
 
