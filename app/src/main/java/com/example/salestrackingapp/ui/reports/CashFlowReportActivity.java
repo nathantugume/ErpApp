@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -23,9 +24,12 @@ import android.widget.TextView;
 import com.example.salestrackingapp.Classes.CashFlowItem;
 import com.example.salestrackingapp.R;
 import com.example.salestrackingapp.adapters.CashFlowAdapter;
+import com.example.salestrackingapp.ui.Users.LoginActivity;
+import com.example.salestrackingapp.ui.settings.SettingsActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -75,6 +79,18 @@ public class CashFlowReportActivity extends AppCompatActivity {
             public void onClick(View view) {
                 onBackPressed();
             }
+        });
+
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.sign_out){
+                logout();
+                return true;
+            } else if (item.getItemId() == R.id.settings) {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+
+            }
+            return false;
         });
 
         // Initialize UI components
@@ -317,5 +333,12 @@ public class CashFlowReportActivity extends AppCompatActivity {
         view.draw(canvas);
         return bitmap;
     }
-
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        // you can navigate to the login screen or perform any cleanup
+        // After sign-out, you can navigate to the LoginActivity
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish(); // Close the current activity
+    }
 }

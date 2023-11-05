@@ -40,6 +40,7 @@ private MaterialToolbar topAppbar;
         DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
         topAppbar = findViewById(R.id.topAppBar);
         topAppbar.setNavigationOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
+        setSupportActionBar(topAppbar);
 
         NavigationView navigationView = findViewById(R.id.drawer_navigation);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -81,6 +82,18 @@ private MaterialToolbar topAppbar;
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_role", MODE_PRIVATE);
          String role = sharedPreferences.getString("role", null);
+
+         topAppbar.setOnMenuItemClickListener(item -> {
+             if (item.getItemId() == R.id.sign_out){
+                 logout();
+                 return true;
+             } else if (item.getItemId() == R.id.settings) {
+              Intent intent = new Intent(AdminDashboardActivity.this, SettingsActivity.class);
+              startActivity(intent);
+
+             }
+             return false;
+         });
 
 
        switch (role.toLowerCase()){

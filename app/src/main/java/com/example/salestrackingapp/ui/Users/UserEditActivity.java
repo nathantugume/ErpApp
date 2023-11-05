@@ -1,5 +1,6 @@
 package com.example.salestrackingapp.ui.Users;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.salestrackingapp.R;
+import com.example.salestrackingapp.ui.settings.SettingsActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -51,6 +53,17 @@ public class UserEditActivity extends AppCompatActivity {
             }
         });
 
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.sign_out){
+                logout();
+                return true;
+            } else if (item.getItemId() == R.id.settings) {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+
+            }
+            return false;
+        });
         cancelBtn = findViewById(R.id.cancelButton);
         save = findViewById(R.id.saveButton);
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -204,5 +217,12 @@ public class UserEditActivity extends AppCompatActivity {
                 });
     }
 
-
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        // you can navigate to the login screen or perform any cleanup
+        // After sign-out, you can navigate to the LoginActivity
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish(); // Close the current activity
+    }
 }

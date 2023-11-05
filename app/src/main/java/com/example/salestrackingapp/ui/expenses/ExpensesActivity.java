@@ -10,13 +10,16 @@ import android.view.View;
 
 import com.example.salestrackingapp.Admin.AdminDashboardActivity;
 import com.example.salestrackingapp.R;
+import com.example.salestrackingapp.ui.Users.LoginActivity;
 import com.example.salestrackingapp.ui.categories.CategoryActivity;
 import com.example.salestrackingapp.ui.products.ProductsActivity;
 import com.example.salestrackingapp.ui.reports.ReportsActivity;
+import com.example.salestrackingapp.ui.settings.SettingsActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ExpensesActivity extends AppCompatActivity {
 
@@ -36,6 +39,18 @@ public class ExpensesActivity extends AppCompatActivity {
             public void onClick(View view) {
                 onBackPressed();
             }
+        });
+
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.sign_out){
+                logout();
+                return true;
+            } else if (item.getItemId() == R.id.settings) {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+
+            }
+            return false;
         });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -81,5 +96,14 @@ public class ExpensesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        // you can navigate to the login screen or perform any cleanup
+        // After sign-out, you can navigate to the LoginActivity
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish(); // Close the current activity
     }
 }

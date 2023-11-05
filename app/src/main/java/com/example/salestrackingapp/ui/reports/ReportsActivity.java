@@ -10,12 +10,15 @@ import android.view.View;
 
 import com.example.salestrackingapp.Admin.AdminDashboardActivity;
 import com.example.salestrackingapp.R;
+import com.example.salestrackingapp.ui.Users.LoginActivity;
 import com.example.salestrackingapp.ui.categories.CategoryActivity;
 import com.example.salestrackingapp.ui.products.ProductsActivity;
+import com.example.salestrackingapp.ui.settings.SettingsActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ReportsActivity extends AppCompatActivity {
 
@@ -61,6 +64,18 @@ public class ReportsActivity extends AppCompatActivity {
             }
         });
 
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.sign_out){
+                logout();
+                return true;
+            } else if (item.getItemId() == R.id.settings) {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+
+            }
+            return false;
+        });
+
         MaterialCardView cash_flow_report = findViewById(R.id.cashFlowCard);
         MaterialCardView balance_sheet = findViewById(R.id.balanceSheet_card);
         MaterialCardView sales_report = findViewById(R.id.sales_report);
@@ -98,9 +113,14 @@ public class ReportsActivity extends AppCompatActivity {
             }
         });
 
+    }
 
-
-
-
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        // you can navigate to the login screen or perform any cleanup
+        // After sign-out, you can navigate to the LoginActivity
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish(); // Close the current activity
     }
 }

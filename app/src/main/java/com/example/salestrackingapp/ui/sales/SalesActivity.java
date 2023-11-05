@@ -5,6 +5,7 @@ package com.example.salestrackingapp.ui.sales;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.print.PrintJob;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.salestrackingapp.Admin.AdminDashboardActivity;
 import com.example.salestrackingapp.Classes.Product;
 import com.example.salestrackingapp.Classes.Sale;
 import com.example.salestrackingapp.Classes.SaleManager;
@@ -32,6 +34,8 @@ import com.example.salestrackingapp.Fragments.CaptureAct;
 import com.example.salestrackingapp.R;
 import com.example.salestrackingapp.adapters.ReceiptProductAdapter;
 import com.example.salestrackingapp.adapters.SalesProductAdapter;
+import com.example.salestrackingapp.ui.Users.LoginActivity;
+import com.example.salestrackingapp.ui.settings.SettingsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -107,6 +111,18 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
         settingsManager = new SettingsManager(companyId, this);
         saleManager = new SaleManager(this, true);
         fetchMinimumStockSetting();
+
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.sign_out){
+                logout();
+                return true;
+            } else if (item.getItemId() == R.id.settings) {
+                Intent intent = new Intent(SalesActivity.this, SettingsActivity.class);
+                startActivity(intent);
+
+            }
+            return false;
+        });
     }
 
     private void printReceipt() {
@@ -441,5 +457,14 @@ public class SalesActivity extends AppCompatActivity implements SalesProductAdap
                 Toast.makeText(this, notificationMessage, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        // you can navigate to the login screen or perform any cleanup
+        // After sign-out, you can navigate to the LoginActivity
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish(); // Close the current activity
     }
 }

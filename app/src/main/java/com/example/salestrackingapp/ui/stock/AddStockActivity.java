@@ -1,6 +1,7 @@
 package com.example.salestrackingapp.ui.stock;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,9 +26,12 @@ import com.example.salestrackingapp.Fragments.CaptureAct;
 import com.example.salestrackingapp.R;
 import com.example.salestrackingapp.adapters.OnPriceChangeListener;
 import com.example.salestrackingapp.adapters.StockItemAdapter;
+import com.example.salestrackingapp.ui.Users.LoginActivity;
+import com.example.salestrackingapp.ui.settings.SettingsActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -81,6 +85,18 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
             public void onClick(View view) {
                 onBackPressed();
             }
+        });
+
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.sign_out){
+                logout();
+                return true;
+            } else if (item.getItemId() == R.id.settings) {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+
+            }
+            return false;
         });
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
         companyId = sharedPreferences.getString("companyId", null);
@@ -413,5 +429,12 @@ public class AddStockActivity extends AppCompatActivity implements StockItem.OnQ
             Log.d("Error","sorry"+e.getMessage());
         }
     }
-
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        // you can navigate to the login screen or perform any cleanup
+        // After sign-out, you can navigate to the LoginActivity
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish(); // Close the current activity
+    }
 }
