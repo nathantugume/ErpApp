@@ -101,6 +101,18 @@
         android:text="Ugx 0.00"
         android:textSize="18sp"/>
      </LinearLayout>
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/print_blc"
+        android:text="print"
+        android:textSize="16sp"
+        android:drawableEnd="@drawable/ic_print"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="200dp"
+        android:layout_marginEnd="10dp"/>
+    />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

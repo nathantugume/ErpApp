@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.print.PrintHelper;
 
 import com.example.salestrackingapp.Admin.AdminDashboardActivity;
 import com.example.salestrackingapp.R;
@@ -22,6 +25,7 @@ import com.example.salestrackingapp.ui.products.ProductsActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,6 +54,9 @@ public class BalanceSheetActivity extends AppCompatActivity {
     private double totalAssets;
     private Source source = Source.DEFAULT;
     private String companyId;
+    private MaterialToolbar toolbar;
+    private BottomNavigationView bottomNavigationView;
+    private ExtendedFloatingActionButton printBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +67,8 @@ public class BalanceSheetActivity extends AppCompatActivity {
         companyId = sharedPreferences.getString("companyId", null);
 
         // Initialize UI components
-        MaterialToolbar toolbar;
 
+        printBtn = findViewById(R.id.print_blc);
         //        toolbar
         toolbar = findViewById(R.id.topAppBar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -71,7 +78,8 @@ public class BalanceSheetActivity extends AppCompatActivity {
             }
         });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener(){
 
             @Override
@@ -97,6 +105,8 @@ public class BalanceSheetActivity extends AppCompatActivity {
             }
         });
 
+
+        printBtn.setOnClickListener(view -> printDoc());
 // Initialize UI components
         monthYearButton = findViewById(R.id.monthYearButton);
         totalAssetsTextView = findViewById(R.id.totalAssetsTextView);
@@ -270,6 +280,43 @@ public class BalanceSheetActivity extends AppCompatActivity {
         balanceSheetHeading.setText("Balance Sheet as of "+fullDate);
         balanceSheetHeading.setVisibility(View.VISIBLE);
         balanceSheetHeading.setPaintFlags(balanceSheetHeading.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+    }
+
+    private void printDoc() {
+        toolbar.setVisibility(View.GONE);
+        printBtn.setVisibility(View.GONE);
+        bottomNavigationView.setVisibility(View.GONE);
+
+        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+
+        // Convert the layout to a bitmap
+        Bitmap bitmap = loadBitmapFromView(rootView);
+
+        // Use PrintHelper to print the bitmap
+        PrintHelper printHelper = new PrintHelper(this);
+        printHelper.setScaleMode(PrintHelper.SCALE_MODE_FIT);
+        printHelper.printBitmap("balance_sheet.pdf", bitmap);
+
+    }
+
+    public static Bitmap loadBitmapFromView(View view) {
+
+        // Remove the top and bottom app bars from the view
+        view.setPadding(0, 10, 0, 10);
+
+
+        // Measure and layout the view
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        // Create a bitmap of the layout
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
 
 }

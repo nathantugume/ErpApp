@@ -1,12 +1,15 @@
 package com.example.salestrackingapp.ui.reports;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.print.PrintHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +25,7 @@ import com.example.salestrackingapp.R;
 import com.example.salestrackingapp.adapters.CashFlowAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -50,6 +54,8 @@ public class CashFlowReportActivity extends AppCompatActivity {
     private TextView totalInFlow;
     private TextView totalOutFlow;
    private String companyId;
+    private ExtendedFloatingActionButton printBtn;
+    private MaterialToolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +65,9 @@ public class CashFlowReportActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
          companyId = sharedPreferences.getString("companyId", null);
 
-        MaterialToolbar toolbar;
 
+        printBtn = findViewById(R.id.print_blc);
+        printBtn.setOnClickListener(view -> printDoc());
         //        toolbar
         toolbar = findViewById(R.id.topAppBar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -273,4 +280,42 @@ public class CashFlowReportActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return dateFormat.format(calendar.getTime());
     }
+
+    private void printDoc() {
+        toolbar.setVisibility(View.GONE);
+        printBtn.setVisibility(View.GONE);
+//        bottomNavigationView.setVisibility(View.GONE);
+
+        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+
+        // Convert the layout to a bitmap
+        Bitmap bitmap = loadBitmapFromView(rootView);
+
+        // Use PrintHelper to print the bitmap
+        PrintHelper printHelper = new PrintHelper(this);
+        printHelper.setScaleMode(PrintHelper.SCALE_MODE_FIT);
+        printHelper.printBitmap("cash_flow.pdf", bitmap);
+
+    }
+
+    public static Bitmap loadBitmapFromView(View view) {
+
+        // Remove the top and bottom app bars from the view
+        view.setPadding(0, 10, 0, 10);
+
+
+        // Measure and layout the view
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        // Create a bitmap of the layout
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
+    }
+
 }
